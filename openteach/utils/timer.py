@@ -4,6 +4,7 @@ import zmq
 import pickle
 import numpy as np
 import base64
+import copy
 
 class FrequencyTimer(object):
     def __init__(self, frequency_rate):
@@ -11,6 +12,17 @@ class FrequencyTimer(object):
 
     def start_loop(self):
         self.start_time = time.time_ns()
+
+    def check_time(self, frequency_rate):
+        # if prev_check_time variable doesn't exist, create it
+        if not hasattr(self, 'prev_check_time'):
+            self.prev_check_time = copy.copy(self.start_time)
+
+        curr_time = time.time_ns()
+        if (curr_time - self.prev_check_time) > 1e9 / frequency_rate:
+            self.prev_check_time = curr_time
+            return True
+        return False
 
     def end_loop(self):
         wait_time = self.time_available + self.start_time

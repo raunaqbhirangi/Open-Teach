@@ -71,4 +71,5 @@ class OnrobotGripper(RobotWrapper):
         self._controller.move_hand(input_coords)
 
     def move(self, angles):
+        print("EXEC on onrobot", angles)
         self._controller.move_hand(angles)

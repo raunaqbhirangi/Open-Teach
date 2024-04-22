@@ -64,7 +64,7 @@ controllers:
     _target_: openteach.robot.kinova.KinovaArm
   # Onrobot
   -
-    _target_: openteach.robot.onrobot.OnRobotGripper
+    _target_: openteach.robot.onrobot.OnrobotGripper
 
 recorded_data:
   # Kinova

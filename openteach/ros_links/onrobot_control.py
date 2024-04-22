@@ -8,6 +8,8 @@ from onrobot_rg_control.msg import OnRobotRGOutputStamped
 
 from copy import deepcopy as copy
 
+ONROBOT_HOME_VALUES = [1105.]
+
 ONROBOT_INPUT_TOPIC = '/OnRobotRGInputStamped'
 ONROBOT_OUTPUT_TOPIC = '/OnRobotRGOutputStamped'
 
@@ -18,6 +20,7 @@ class DexArmControl():
             rospy.init_node("dex_arm", disable_signals = True, anonymous = True)
         except:
             pass
+        self._init_onrobot_gripper_control()
 
     # Controller initializers
     def _init_onrobot_gripper_control(self):
@@ -101,10 +104,13 @@ class DexArmControl():
 
     # Movement functions
     def move_hand(self, gripper_width):
-        self.onrobot.hand_pose(gripper_width, False)
+        if isinstance(gripper_width, list):
+            assert len(gripper_width) == 1
+            gripper_width = gripper_width[0]
+        self.onrobot.gripper_width(gripper_width, True)
 
     def home_hand(self):
-        self.onrobot.hand_pose(ONROBOT_HOME_VALUES)
+        self.onrobot.move_hand(ONROBOT_HOME_VALUES)
 
     def reset_hand(self):
         self.home_hand()

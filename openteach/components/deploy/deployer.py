@@ -7,7 +7,7 @@ from multiprocessing import Process
 from openteach.components import Component
 from openteach.utils.network import create_response_socket
 from openteach.utils.timer import FrequencyTimer
-from openteach.constants import DEPLOY_FREQ, VR_FREQ
+from openteach.constants import DEPLOY_FREQ, POLICY_FREQ
 
 class DeployServer(Component):
     def __init__(self, configs):
@@ -108,36 +108,39 @@ class DeployServer(Component):
         self.notify_component_start('robot deployer')
         # self.visualizer_process.start()
         while True:
-            try:
-                print('\nListening')
+            # try:
                 self.timer.start_loop()
-                robot_action = pickle.loads(self.deployment_socket.recv())
+                if self.timer.check_time(POLICY_FREQ):
+                    print('\nWaiting for action')
+                    robot_action = self.deployment_socket.recv()
+                    print(robot_action)
 
-                if robot_action == b'get_state':
-                    print('Requested for robot state information.')
-                    self._send_robot_state()
-                    continue
+                    if robot_action == b'get_state':
+                        print('Requested for robot state information.')
+                        self._send_robot_state()
+                        continue
 
-                if robot_action == b'get_sensor_state':
-                    print('Requested for sensor information.')
-                    self._send_sensor_state()
-                    continue
+                    if robot_action == b'get_sensor_state':
+                        print('Requested for sensor information.')
+                        self._send_sensor_state()
+                        continue
+                    
+                    robot_action = pickle.loads(robot_action)
+                    success = self._perform_robot_action(robot_action)
+                    print('success: {}'.format(success))
+                    # More accurate sleep
+                    
+                    self.timer.end_loop()
 
-                success = self._perform_robot_action(robot_action)
-                print('success: {}'.format(success))
-                # More accurate sleep
-                
-                self.timer.end_loop()
-
-                if success:
-                    print('Before sending the states')
-                    self._send_both_state()
-                    print('Applied robot action.')
+                    if success:
+                        print('Before sending the states')
+                        self._send_both_state()
+                        print('Applied robot action.')
+                    else:
+                        self.deployment_socket.send(b"Command failed!")
                 else:
-                    self.deployment_socket.send("Command failed!")
-            except:
-                print('Illegal values passed. Terminating session.')
-                break
+                    continue
+                
 
         # self.visualizer_process.join()
         print('Closing robot deployer component.')
