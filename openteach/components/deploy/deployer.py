@@ -42,7 +42,7 @@ class DeployServer(Component):
         try:
 
             # Kinova should be applied earlier than allegro
-            robot_order = ['franka', 'allegro']
+            robot_order = ['kinova', 'franka', 'onrobot', 'allegro']
 
             for robot in robot_order:
                 if robot in robot_action_dict.keys():
@@ -59,7 +59,7 @@ class DeployServer(Component):
                             self._robots[robot].move_coords(robot_action_dict[robot])
 
                     else: 
-                        print('Moving allegro to given angles')
+                        print(f'Moving {robot} to given angles')
                         self._robots[robot].move(robot_action_dict[robot])
                     print('Applying action {} on robot: {}'.format(robot_action_dict[robot], robot))
             return True
@@ -113,12 +113,12 @@ class DeployServer(Component):
                 self.timer.start_loop()
                 robot_action = pickle.loads(self.deployment_socket.recv())
 
-                if robot_action == 'get_state':
+                if robot_action == b'get_state':
                     print('Requested for robot state information.')
                     self._send_robot_state()
                     continue
 
-                if robot_action == 'get_sensor_state':
+                if robot_action == b'get_sensor_state':
                     print('Requested for sensor information.')
                     self._send_sensor_state()
                     continue
