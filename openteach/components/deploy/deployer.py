@@ -63,8 +63,9 @@ class DeployServer(Component):
                         self._robots[robot].move(robot_action_dict[robot])
                     print('Applying action {} on robot: {}'.format(robot_action_dict[robot], robot))
             return True
-        except:
+        except Exception as e:
             print(f'robot: {robot} failed executing in perform_robot_action')
+            print(f'EXCEPTION: {e}')
             return False
 
     def _get_robot_states(self):
@@ -108,7 +109,7 @@ class DeployServer(Component):
         self.notify_component_start('robot deployer')
         # self.visualizer_process.start()
         while True:
-            # try:
+            try:
                 self.timer.start_loop()
                 if self.timer.check_time(POLICY_FREQ):
                     print('\nWaiting for action')
@@ -140,7 +141,9 @@ class DeployServer(Component):
                         self.deployment_socket.send(b"Command failed!")
                 else:
                     continue
-                
+            except Exception as e:
+                print(f"EXCEPTION: {e}")
+                break
 
         # self.visualizer_process.join()
         print('Closing robot deployer component.')
