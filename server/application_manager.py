@@ -30,7 +30,7 @@ class VideoStreamer(object):
 class MonitoringApplication(object):
     def __init__(self, configs):
         # Loading the network configurations
-        self.host_address = configs.host_address
+        self.camera_address = configs.camera_address
         self.keypoint_port = configs.keypoint_port
         self.port_offset = configs.cam_port_offset
         self.num_cams = len(configs.robot_cam_serial_numbers)
@@ -56,7 +56,7 @@ class MonitoringApplication(object):
         for idx in range(self.num_cams):
             self.cam_streamers.append(
                 VideoStreamer(
-                    host = self.host_address,
+                    host = self.camera_address,
                     cam_port = self.port_offset + idx
                 )
             )

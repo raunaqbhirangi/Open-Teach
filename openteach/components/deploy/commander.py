@@ -31,13 +31,13 @@ class DeployAPI(object):
         for idx in range(len(self.configs.robot_cam_serial_numbers)):
             if idx + 1 in self.required_data['rgb_idxs']:
                 self._rgb_streams.append(ZMQCameraSubscriber(
-                    host = self.configs.host_address,
+                    host = self.configs.camera_address,
                     port = self.configs.cam_port_offset + idx,
                     topic_type = 'RGB'
                 ))
 
                 self._depth_streams.append(ZMQCameraSubscriber(
-                    host = self.configs.host_address,
+                    host = self.configs.camera_address,
                     port = self.configs.cam_port_offset + idx + DEPTH_PORT_OFFSET,
                     topic_type = 'Depth'
                 ))

@@ -6,13 +6,13 @@ defaults:
 
 camera_address: '172.24.71.211'
 robot_cam_serial_numbers:
-  - '021422062804'
-  - '138422075648'
+  - '147322072736'
+  - '147322072546'
   - '028522071213'
 
 cam_configs:
-  width: 1280
-  height: 720
+  width: 640
+  height: 480
   fps: 30
   processing_preset: 1 # High accuracy mode
   rotation_angle: 0
