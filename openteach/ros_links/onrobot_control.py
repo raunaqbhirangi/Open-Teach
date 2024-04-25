@@ -15,16 +15,16 @@ ONROBOT_OUTPUT_TOPIC = '/OnRobotRGOutputStamped'
 
 
 class DexArmControl():
-    def __init__(self):
+    def __init__(self, record_type):
         try:
             rospy.init_node("dex_arm", disable_signals = True, anonymous = True)
         except:
             pass
-        self._init_onrobot_gripper_control()
+        self._init_onrobot_gripper_control(record_type)
 
     # Controller initializers
-    def _init_onrobot_gripper_control(self):
-        self.onrobot = OnrobotController()
+    def _init_onrobot_gripper_control(self, record_type):
+        self.onrobot = OnrobotController(record_type)
 
         self.onrobot_joint_state = None
         rospy.Subscriber(

@@ -7,7 +7,7 @@ from openteach.ros_links.onrobot_control import DexArmControl # Modified from ht
 class OnrobotGripper(RobotWrapper):
     def __init__(self, record_type=None) -> None:
         super().__init__()
-        self._controller = DexArmControl()
+        self._controller = DexArmControl(record_type)
 
         self._data_frequency = 300
 
@@ -71,5 +71,4 @@ class OnrobotGripper(RobotWrapper):
         self._controller.move_hand(input_coords)
 
     def move(self, angles):
-        print("EXEC on onrobot", angles)
         self._controller.move_hand(angles)

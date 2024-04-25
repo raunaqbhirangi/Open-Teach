@@ -59,7 +59,8 @@ class DeployServer(Component):
                             self._robots[robot].move_coords(robot_action_dict[robot])
 
                     else: 
-                        print(f'Moving {robot} to given angles')
+                        # print(f'Moving {robot} to given angles')
+                        pass
                         self._robots[robot].move(robot_action_dict[robot])
                     print('Applying action {} on robot: {}'.format(robot_action_dict[robot], robot))
             return True
@@ -114,7 +115,6 @@ class DeployServer(Component):
                 if self.timer.check_time(POLICY_FREQ):
                     print('\nWaiting for action')
                     robot_action = self.deployment_socket.recv()
-                    print(robot_action)
 
                     if robot_action == b'get_state':
                         print('Requested for robot state information.')
@@ -128,15 +128,15 @@ class DeployServer(Component):
                     
                     robot_action = pickle.loads(robot_action)
                     success = self._perform_robot_action(robot_action)
-                    print('success: {}'.format(success))
+                    # print('success: {}'.format(success))
                     # More accurate sleep
                     
                     self.timer.end_loop()
 
                     if success:
-                        print('Before sending the states')
+                        # print('Before sending the states')
                         self._send_both_state()
-                        print('Applied robot action.')
+                        # print('Applied robot action.')
                     else:
                         self.deployment_socket.send(b"Command failed!")
                 else:

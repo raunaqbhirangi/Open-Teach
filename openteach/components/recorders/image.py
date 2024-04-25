@@ -73,8 +73,8 @@ class RGBImageRecorder(Recorder):
                 self.num_image_frames += 1
                 self.timer.end_loop()
             except KeyboardInterrupt:
-                    self.record_end_time = time.time()
-                    break
+                self.record_end_time = time.time()
+                break
             
         # Closing the socket
         self.image_subscriber.stop()

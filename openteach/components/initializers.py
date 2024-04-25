@@ -36,7 +36,7 @@ class RealsenseCameras(ProcessInstantiator):
     def _start_component(self, cam_idx):
         component = RealsenseCamera(
             stream_configs = dict(
-                host = self.configs.host_address,
+                host = self.configs.camera_address,
                 port = self.configs.cam_port_offset + cam_idx
             ),
             cam_serial_num = self.configs.robot_cam_serial_numbers[cam_idx],
@@ -206,7 +206,7 @@ class Collector(ProcessInstantiator):
         if self.configs.sim_env is False:
             print("RGB function")
             component = RGBImageRecorder(
-                host = self.configs.host_address,
+                host = self.configs.camera_address,
                 image_stream_port = self.configs.cam_port_offset + cam_idx,
                 storage_path = self._storage_path,
                 filename = 'cam_{}_rgb_video'.format(cam_idx)
@@ -214,7 +214,7 @@ class Collector(ProcessInstantiator):
         else:
             print("Reaching correct function")
             component = RGBImageRecorder(
-            host = self.configs.host_address,
+            host = self.configs.camera_address,
             image_stream_port = self.configs.sim_image_port+ cam_idx,
             storage_path = self._storage_path,
             filename = 'cam_{}_rgb_video'.format(cam_idx),
@@ -226,14 +226,14 @@ class Collector(ProcessInstantiator):
     def _start_depth_component(self, cam_idx):
         if self.configs.sim_env is not True:
             component = DepthImageRecorder(
-                host = self.configs.host_address,
+                host = self.configs.camera_address,
                 image_stream_port = self.configs.cam_port_offset + cam_idx + DEPTH_PORT_OFFSET,
                 storage_path = self._storage_path,
                 filename = 'cam_{}_depth'.format(cam_idx)
             )
         else:
             component = DepthImageRecorder(
-                host = self.configs.host_address,
+                host = self.configs.camera_address,
                 image_stream_port = self.configs.sim_image_port + cam_idx + DEPTH_PORT_OFFSET,
                 storage_path = self._storage_path,
                 filename = 'cam_{}_depth'.format(cam_idx)
