@@ -4,11 +4,10 @@ from abc import ABC
 from .recorders.image import RGBImageRecorder, DepthImageRecorder, FishEyeImageRecorder
 from .recorders.robot_state import RobotInformationRecord
 from .recorders.sim_state import SimInformationRecord
-from .recorders.sensors import XelaSensorRecorder
+from .recorders.sensors import XelaSensorRecorder, ReskinSensorRecorder
 from .sensors import *
 from multiprocessing import Process
 from openteach.constants import *
-
 
 
 class ProcessInstantiator(ABC):
@@ -93,7 +92,7 @@ class TeleOperator(ProcessInstantiator):
     """
     def __init__(self, configs):
         super().__init__(configs)
-      
+
         # For Simulation environment start the environment as well
         if configs.sim_env:
             self._init_sim_environment()
@@ -106,20 +105,20 @@ class TeleOperator(ProcessInstantiator):
 
         if configs.operate: 
             self._init_operator()
-        
+
     #Function to start the components
     def _start_component(self, configs):    
         component = hydra.utils.instantiate(configs)
         component.stream()
 
-    #Function to start the detector component
+    # Function to start the detector component
     def _init_detector(self):
         self.processes.append(Process(
             target = self._start_component,
             args = (self.configs.robot.detector, )
         ))
 
-    #Function to start the sim environment
+    # Function to start the sim environment
     def _init_sim_environment(self):
          for env_config in self.configs.robot.environment:
             self.processes.append(Process(
@@ -127,7 +126,7 @@ class TeleOperator(ProcessInstantiator):
                 args = (env_config, )
             ))
 
-    #Function to start the keypoint transform
+    # Function to start the keypoint transform
     def _init_keypoint_transform(self):
         for transform_config in self.configs.robot.transforms:
             self.processes.append(Process(
@@ -135,9 +134,8 @@ class TeleOperator(ProcessInstantiator):
                 args = (transform_config, )
             ))
 
-    #Function to start the visualizers
+    # Function to start the visualizers
     def _init_visualizers(self):
-       
         for visualizer_config in self.configs.robot.visualizers:
             self.processes.append(Process(
                 target = self._start_component,
@@ -151,17 +149,16 @@ class TeleOperator(ProcessInstantiator):
                     args = (visualizer_config, )
                 ))
 
-    #Function to start the operator
+    # Function to start the operator
     def _init_operator(self):
         for operator_config in self.configs.robot.operators:
-            
             self.processes.append(Process(
                 target = self._start_component,
                 args = (operator_config, )
 
             ))
 
-    
+
 # Data Collector Class
 class Collector(ProcessInstantiator):
     """
@@ -175,7 +172,7 @@ class Collector(ProcessInstantiator):
             self.configs.storage_path, 
             'demonstration_{}'.format(self.demo_num)
         )
-       
+
         self._create_storage_dir()
         self._init_camera_recorders()
         # Initializing the recorders
@@ -184,9 +181,8 @@ class Collector(ProcessInstantiator):
         else:
             print("Initialising robot recorders")
             self._init_robot_recorders()
-        
-        
-        if self.configs.is_xela is True:
+
+        if self.configs.use_sensor is True:
             self._init_sensor_recorders()
 
     def _create_storage_dir(self):
@@ -277,16 +273,21 @@ class Collector(ProcessInstantiator):
                         args = (port_configs[0],key)))
 
     #Function to start the xela sensor recorders
-    def _start_xela_component(self,
-        controller_config
-    ):
+    def _start_xela_component(self, controller_config):
         component = XelaSensorRecorder(
             controller_configs=controller_config,
             storage_path=self._storage_path
         )
         component.stream()
 
-    #Function to start the sensor recorders
+    def _start_reskin_component(self, controller_config):
+        component = ReskinSensorRecorder(
+            controller_configs=controller_config,
+            storage_path=self._storage_path
+        )
+        component.stream()
+
+    # Function to start the sensor recorders
     def _init_sensor_recorders(self):
         """
         For the XELA sensors or any other sensors
@@ -307,7 +308,7 @@ class Collector(ProcessInstantiator):
         )
         component.stream()
 
-    #Function to start the robot recorders
+    # Function to start the robot recorders
     def _start_robot_component(
         self, 
         robot_configs, 
@@ -320,7 +321,7 @@ class Collector(ProcessInstantiator):
 
         component.stream()
 
-    #Function to start the sim recorders
+    # Function to start the sim recorders
     def _start_sim_component(self,port_configs, recorder_function_key):
         component = SimInformationRecord(
                    port_configs = port_configs,
@@ -329,7 +330,7 @@ class Collector(ProcessInstantiator):
         )
         component.stream()
 
-    #Function to start the robot recorders
+    # Function to start the robot recorders
     def _init_robot_recorders(self):
         # Instantiating the robot classes
         for idx, robot_controller_configs in enumerate(self.configs.robot.controllers):
@@ -338,8 +339,3 @@ class Collector(ProcessInstantiator):
                     target = self._start_robot_component,
                     args = (robot_controller_configs, key, )
                 ))
-
-
-    
-
-   

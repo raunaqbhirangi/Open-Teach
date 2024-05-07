@@ -9,7 +9,7 @@ defaults:
 storage_path: extracted_data/test_reach
 demo_num: 271
 sim_env: false
-is_xela: false
+use_sensor: false
 host: ${host_address}
 
 

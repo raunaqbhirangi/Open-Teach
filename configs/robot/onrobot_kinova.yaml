@@ -66,6 +66,10 @@ controllers:
   -
     _target_: openteach.robot.onrobot.OnrobotGripper
 
+xela_controllers:
+  -
+    _target_: openteach.components.sensors.reskin.ReskinSensor
+
 recorded_data:
   # Kinova
   - 

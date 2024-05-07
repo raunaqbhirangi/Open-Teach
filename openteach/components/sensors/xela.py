@@ -15,6 +15,9 @@ class XelaSensors(Component):
         self.timer = FrequencyTimer(XELA_FPS)
         self._set_bias()
 
+    def __repr__(self) -> str:
+        return "xela"
+
     # The bias should be received for the first 2-3 seconds
     # to normalize the data accordingly
     def _set_bias(self):
@@ -83,6 +86,9 @@ class XelaCurvedSensors(Component):
         self._bias_duration = init_duration # Wait 3 seconds for finding the average
         self.timer = FrequencyTimer(XELA_FPS)
         self._set_bias()
+
+    def __repr__(self) -> str:
+        return "xela"
 
     # The bias should be received for the first 2-3 seconds
     # to normalize the data accordingly
