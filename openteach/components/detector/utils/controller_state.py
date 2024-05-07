@@ -15,9 +15,9 @@ class ControllerState(State):
     left_thumbstick: bool
     left_index_trigger: float
     left_hand_trigger: float
-    left_thumbstick_axes: np.ndarray[Tuple[float, float]]
-    left_local_position: np.ndarray[Tuple[float, float, float]]
-    left_local_rotation: np.ndarray[Tuple[float, float, float, float]]
+    left_thumbstick_axes: np.ndarray
+    left_local_position: np.ndarray
+    left_local_rotation: np.ndarray
 
     right_a: bool
     right_b: bool
@@ -25,9 +25,9 @@ class ControllerState(State):
     right_thumbstick: bool
     right_index_trigger: float
     right_hand_trigger: float
-    right_thumbstick_axes: np.ndarray[Tuple[float, float]]
-    right_local_position: np.ndarray[Tuple[float, float, float]]
-    right_local_rotation: np.ndarray[Tuple[float, float, float, float]]
+    right_thumbstick_axes: np.ndarray
+    right_local_position: np.ndarray
+    right_local_rotation: np.ndarray
 
     created_timestamp: float
 

@@ -99,8 +99,8 @@ class TeleOperator(ProcessInstantiator):
         # Start the Hand Detector
         self._init_detector()
         # Start the keypoint transform
-        self._init_keypoint_transform()
-        self._init_visualizers()
+        # self._init_keypoint_transform()
+        # self._init_visualizers()
 
 
         if configs.operate: 

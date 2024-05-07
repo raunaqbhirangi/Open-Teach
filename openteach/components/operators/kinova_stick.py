@@ -60,17 +60,17 @@ class KinovaArmStickOperator(Operator):
         self.resolution_scale = 1 # NOTE: Get this from a socket
         self.arm_teleop_state = ARM_TELEOP_STOP # We will start as the cont
 
-        self._arm_resolution_subscriber = ZMQKeypointSubscriber(
-            host = host,
-            port = arm_resolution_port,
-            topic = 'button'
-        )
+        # self._arm_resolution_subscriber = ZMQKeypointSubscriber(
+        #     host = host,
+        #     port = arm_resolution_port,
+        #     topic = 'button'
+        # )
 
-        self._arm_teleop_state_subscriber = ZMQKeypointSubscriber(
-            host = host, 
-            port = teleoperation_reset_port,
-            topic = 'pause'
-        )
+        # self._arm_teleop_state_subscriber = ZMQKeypointSubscriber(
+        #     host = host, 
+        #     port = teleoperation_reset_port,
+        #     topic = 'pause'
+        # )
         
         time.sleep(1)
         robot_coords = self.robot.get_cartesian_position()
@@ -97,6 +97,7 @@ class KinovaArmStickOperator(Operator):
 
         self.start_teleop = False
         self.init_affine = None
+        self.last_time = time.time()
 
     @property
     def timer(self):
@@ -261,6 +262,7 @@ class KinovaArmStickOperator(Operator):
             self.start_teleop = True
             self.controller_init_H = self.controller_state.right_affine
             self.controller_init_t = copy(self.controller_init_H[:3, 3])
+            print("Starting teleop")
         
         if self.controller_state.right_b:
         # Pressing B button stops teleop. And resets calibration frames to None  for right robot.
@@ -269,6 +271,7 @@ class KinovaArmStickOperator(Operator):
             self.controller_init_t = None
             self.home_pose = np.array(self.robot.get_cartesian_position())
             self.robot_init_H = self.cartesian_to_homo(self.home_pose)
+            print("Pausing teleop")
 
         # TODO: Add gripper control to onrobot operator
 
@@ -277,6 +280,9 @@ class KinovaArmStickOperator(Operator):
             current_robot_position = np.array(self.robot.get_cartesian_position())
 
             # TODO: Skipping resolution for now
+            print(f"Time: {time.time() - self.last_time:.2f}")
+            print(self.controller_moving_H)
+            self.last_time = time.time()
 
             # Transformation code
             H_HI_HH = copy(self.controller_init_H) # Homo matrix that takes P_HI to P_HH - Point in Inital Hand Frame to Point in Home Hand Frame
@@ -299,7 +305,7 @@ class KinovaArmStickOperator(Operator):
             H_RT_RH = H_RI_RH  @ H_F_H # Homo matrix that takes P_RT to P_RH
 
             self.robot_moving_H = copy(H_RT_RH)
-            final_pose = self.robot_moving_H
+            final_pose = self._homo2cart(self.robot_moving_H)
 
             if self.use_filter:
                 final_pose = self.comp_filter(final_pose)

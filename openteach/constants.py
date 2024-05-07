@@ -128,3 +128,7 @@ ROBOT_HOME_POSE_AA = [206.0, -0.0, 475, 3.142, 0.0, 0.0]
 ROBOT_HOME_JS = [0.072358, -0.95536, -0.040176,
                  0.661511, -0.032836, 1.616466, 0.047656]
 
+# Oculus stick
+VR_TCP_HOST = "10.19.152.142"
+VR_TCP_PORT = 5555
+VR_CONTROLLER_TOPIC = b"oculus_controller"

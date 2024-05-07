@@ -20,7 +20,7 @@ detector:
 operators:
   # Kinova Arm
   -  
-    _target_: openteach.components.operators.xarm_stick.KinovaArmStickOperator
+    _target_: openteach.components.operators.kinova_stick.KinovaArmStickOperator
     host: ${host_address}
     controller_state_port: ${transformed_position_keypoint_port}
     moving_average_limit: 1
@@ -51,9 +51,9 @@ controllers:
   -
     _target_: openteach.robot.onrobot.OnrobotGripper
 
-xela_controllers:
-  -
-    _target_: openteach.components.sensors.reskin.ReskinSensor
+# xela_controllers:
+#   -
+#     _target_: openteach.components.sensors.reskin.ReskinSensor
 
 recorded_data:
   # Kinova
