@@ -1,4 +1,4 @@
-from openteach.constants import BIMANUAL_VR_FREQ, VR_TCP_HOST, VR_TCP_PORT, VR_CONTROLLER_TOPIC
+from openteach.constants import VR_FREQ, VR_TCP_HOST, VR_TCP_PORT, VR_CONTROLLER_TOPIC
 from openteach.components import Component
 from openteach.utils.timer import FrequencyTimer
 from openteach.utils.network import create_subscriber_socket, ZMQKeypointPublisher
@@ -20,7 +20,7 @@ class OculusVRStickDetector(Component):
             host = host,
             port = controller_state_pub_port
         )
-        self.timer = FrequencyTimer(BIMANUAL_VR_FREQ)
+        self.timer = FrequencyTimer(VR_FREQ)
     
     # Function to Publish the message
     def _publish_controller_state(self, controller_state):

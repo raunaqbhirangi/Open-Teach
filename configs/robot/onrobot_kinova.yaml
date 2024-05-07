@@ -2,26 +2,30 @@ robot_name: onrobot_kinova
 
 # Detection from the oculus
 detector:
-  _target_: openteach.components.detector.oculus.OculusVRHandDetector
+  _target_: openteach.components.detector.oculus_stick.OculusVRStickDetector
   host: ${host_address}
-  oculus_port: ${oculus_reciever_port}
-  keypoint_pub_port: ${keypoint_port}
-  button_port: ${resolution_button_port}
-  button_publish_port: ${resolution_button_publish_port}
-  teleop_reset_port: ${teleop_reset_port}
-  teleop_reset_publish_port: ${teleop_reset_publish_port}
+  controller_state_pub_port: ${transformed_position_keypoint_port}
+
+# detector:
+#   _target_: openteach.components.detector.oculus.OculusVRHandDetector
+#   host: ${host_address}
+#   oculus_port: ${oculus_reciever_port}
+#   keypoint_pub_port: ${keypoint_port}
+#   button_port: ${resolution_button_port}
+#   button_publish_port: ${resolution_button_publish_port}
+#   teleop_reset_port: ${teleop_reset_port}
+#   teleop_reset_publish_port: ${teleop_reset_publish_port}
 
 # Operators used to retarget the keypoints
 operators:
   # Kinova Arm
-  - 
-    _target_: openteach.components.operators.kinova.KinovaArmOperator
+  -  
+    _target_: openteach.components.operators.xarm_stick.KinovaArmStickOperator
     host: ${host_address}
-    transformed_keypoints_port: ${transformed_position_keypoint_port}
+    controller_state_port: ${transformed_position_keypoint_port}
     moving_average_limit: 1
-    arm_resolution_port: ${resolution_button_publish_port}
     use_filter: False
-    teleoperation_reset_port: ${teleop_reset_publish_port}
+
   # TODO: Add OnRobot Gripper Operator if we want to control it with VR
   # -
   #   _target_: openteach.components.operators.allegro.AllegroHandOperator
