@@ -65,7 +65,7 @@ class RealsenseCamera(Component):
 
         # Setting the depth mode to high accuracy mode
         depth_sensor = device.first_depth_sensor()
-        depth_sensor.set_option(rs.option.visual_preset, self.cam_configs.processing_preset)
+        # depth_sensor.set_option(rs.option.visual_preset, self.cam_configs.processing_preset)
         self.realsense = self.pipeline
 
         # Obtaining the color intrinsics matrix for aligning the color and depth images

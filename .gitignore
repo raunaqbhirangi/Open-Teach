@@ -30,3 +30,6 @@ urdf/*
 
 # Logs
 logs/*
+
+open_teach.egg-info/
+kill_server.sh
