@@ -25,6 +25,12 @@ operators:
     controller_state_port: ${transformed_position_keypoint_port}
     moving_average_limit: 1
     use_filter: False
+  
+  # OnRobot Gripper
+  -  
+    _target_: openteach.components.operators.onrobot_stick.OnrobotGripperStickOperator
+    host: ${teleop_address}
+    controller_state_port: ${transformed_position_keypoint_port}
 
   # TODO: Add OnRobot Gripper Operator if we want to control it with VR
   # -

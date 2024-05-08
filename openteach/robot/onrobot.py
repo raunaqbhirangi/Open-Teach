@@ -15,6 +15,9 @@ class OnrobotGripper(RobotWrapper):
     def name(self):
         return 'onrobot'
 
+    def __repr__(self):
+        return 'OnrobotGripper'
+
     # TODO: Check these functions and replace appropriately
     @property
     def recorder_functions(self):
@@ -35,7 +38,7 @@ class OnrobotGripper(RobotWrapper):
         return self._controller.get_commanded_hand_state()
 
     def get_joint_position(self):
-        pass
+        return self._controller.get_hand_state()
 
     def get_joint_velocity(self):
         pass

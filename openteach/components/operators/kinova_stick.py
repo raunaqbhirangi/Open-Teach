@@ -290,9 +290,9 @@ class KinovaArmStickOperator(Operator):
             H_HT_HI = np.linalg.pinv(H_HI_HH) @ H_HT_HH # Homo matrix that takes P_HT to P_HI
 
             # Transformation matrix
-            H_R_V=  [[0,1,0,0],
+            H_R_V=  [[0,-1,0,0],
                     [0,0,-1,0],
-                    [1,0,0,0],
+                    [-1,0,0,0],
                     [0,0,0,1]]
 
             # Find the relative transform and apply it to robot initial position

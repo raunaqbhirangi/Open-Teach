@@ -18,6 +18,9 @@ VR_THUMB_BOUND_VERTICES = 4
 GRIPPER_OPEN=0
 GRIPPER_CLOSE=1
 
+ONROBOT_OPEN = 1100.
+ONROBOT_CLOSE = 0.
+
 OCULUS_JOINTS = {
     'metacarpals': [2, 6, 9, 12, 15],
     'knuckles': [6, 9, 12, 16],
