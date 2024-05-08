@@ -280,9 +280,6 @@ class KinovaArmStickOperator(Operator):
             current_robot_position = np.array(self.robot.get_cartesian_position())
 
             # TODO: Skipping resolution for now
-            print(f"Time: {time.time() - self.last_time:.2f}")
-            print(self.controller_moving_H)
-            self.last_time = time.time()
 
             # Transformation code
             H_HI_HH = copy(self.controller_init_H) # Homo matrix that takes P_HI to P_HH - Point in Inital Hand Frame to Point in Home Hand Frame
@@ -294,8 +291,8 @@ class KinovaArmStickOperator(Operator):
 
             # Transformation matrix
             H_R_V=  [[0,1,0,0],
-                    [-1,0,0,0],
-                    [0,0,1,0],
+                    [0,0,-1,0],
+                    [1,0,0,0],
                     [0,0,0,1]]
 
             # Find the relative transform and apply it to robot initial position
@@ -323,79 +320,8 @@ class KinovaArmStickOperator(Operator):
                 if abs(averaged_velocity[axis]) < self.velocity_threshold:
                     averaged_velocity[axis] = 0
 
+            # Note that this frequency should not be changed unless app frequency is also changed.
             self.robot.move_velocity(averaged_velocity, 1 / VR_FREQ)
-            
-
-        # # See if there is a reset in the teleop
-        # new_arm_teleop_state = self._get_arm_teleop_state()
-        # if self.is_first_frame or (self.arm_teleop_state == ARM_TELEOP_STOP and new_arm_teleop_state == ARM_TELEOP_CONT):
-        #     moving_hand_frame = self._reset_teleop() # Should get the moving hand frame only once
-        # else:
-        #     moving_hand_frame = self._get_hand_frame()
-        # if moving_hand_frame is None: 
-        #     if new_arm_teleop_state == ARM_TELEOP_STOP:
-        #         self.arm_teleop_state = new_arm_teleop_state
-        #     return # It means we are not on the arm mode yet instead of blocking it is directly returning
-        # current_robot_position = self.robot.get_cartesian_position()
-
-        # if current_robot_position is None:
-        #     if new_arm_teleop_state == ARM_TELEOP_STOP:
-        #         self.arm_teleop_state = new_arm_teleop_state
-        #     return
-        
-        # self.arm_teleop_state = new_arm_teleop_state
-
-        # arm_teleoperation_scale_mode = self._get_resolution_scale_mode()
-
-        # if arm_teleoperation_scale_mode == ARM_HIGH_RESOLUTION:
-        #     self.resolution_scale = 1
-        # elif arm_teleoperation_scale_mode == ARM_LOW_RESOLUTION:
-        #     self.resolution_scale = 0.6
-        
-        # # Find the moving hand frame
-        # self.hand_moving_H = self._turn_frame_to_homo_mat(moving_hand_frame)
-
-        # # Transformation code
-        # H_HI_HH = copy(self.hand_init_H) # Homo matrix that takes P_HI to P_HH - Point in Inital Hand Frame to Point in Home Hand Frame
-        # H_HT_HH = copy(self.hand_moving_H) # Homo matrix that takes P_HT to P_HH
-        # H_RI_RH = copy(self.robot_init_H) # Homo matrix that takes P_RI to P_RH
-
-        # # Find the relative transformation in human hand space.
-        # H_HT_HI = np.linalg.pinv(H_HI_HH) @ H_HT_HH # Homo matrix that takes P_HT to P_HI
-
-        # # Transformation matrix
-        # H_R_V=  [[0,1,0,0],
-        #         [-1,0,0,0],
-        #         [0,0,1,0],
-        #         [0,0,0,1]]
-        
-        # # Find the relative transform and apply it to robot initial position
-        # H_R_R= (np.linalg.pinv(H_R_V)@H_HT_HI@H_R_V)[:3,:3]
-        # H_R_T= (np.linalg.pinv(H_R_V)@H_HT_HI@H_R_V)[:3,3]
-        # H_F_H=np.block([[H_R_R,H_R_T.reshape(3,1)],[np.array([0,0,0]),1]])
-        # H_RT_RH = H_RI_RH  @ H_F_H # Homo matrix that takes P_RT to P_RH
-
-        # self.robot_moving_H = copy(H_RT_RH)
-
-        # final_pose = self._get_scaled_cart_pose(self.robot_moving_H)
-        # # filter the pose in case needed
-        # if self.use_filter:
-        #     final_pose = self.comp_filter(final_pose)
-
-        # # Calculated velocity
-        # calculated_velocity = self._get_displacement_vector(final_pose, current_robot_position)
-        # averaged_velocity = moving_average(
-        #     calculated_velocity,
-        #     self.moving_Average_queue,
-        #     self.moving_average_limit
-        # )
-
-        # # Filter the velocities to make it less oscillatory
-        # for axis in range(len(averaged_velocity[:3])):
-        #     if abs(averaged_velocity[axis]) < self.velocity_threshold:
-        #         averaged_velocity[axis] = 0
-
-        # self.robot.move_velocity(averaged_velocity, 1 / VR_FREQ)
 
 
     # NOTE: This is for debugging should remove this when needed
