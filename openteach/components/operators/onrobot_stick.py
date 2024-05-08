@@ -3,7 +3,6 @@ import time
 import numpy as np
 import matplotlib.pyplot as plt 
 
-from copy import deepcopy as copy
 from .operator import Operator
 from scipy.spatial.transform import Rotation
 from openteach.robot.onrobot import OnrobotGripper

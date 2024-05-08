@@ -322,6 +322,9 @@ class KinovaArmStickOperator(Operator):
 
             # Note that this frequency should not be changed unless app frequency is also changed.
             self.robot.move_velocity(averaged_velocity, 1 / VR_FREQ)
+        else:
+            if self.controller_state.right_thumbstick:
+                self.robot.home()
 
 
     # NOTE: This is for debugging should remove this when needed
