@@ -290,9 +290,9 @@ class KinovaArmStickOperator(Operator):
             H_HT_HI = np.linalg.pinv(H_HI_HH) @ H_HT_HH # Homo matrix that takes P_HT to P_HI
 
             # Transformation matrix
-            H_R_V=  [[0,-1,0,0],
+            H_R_V=  [[0,1,0,0],
                     [0,0,-1,0],
-                    [-1,0,0,0],
+                    [1,0,0,0],
                     [0,0,0,1]]
 
             # Find the relative transform and apply it to robot initial position
@@ -325,6 +325,11 @@ class KinovaArmStickOperator(Operator):
         else:
             if self.controller_state.right_thumbstick:
                 self.robot.home()
+                print("Homing")
+                time.sleep(2.)
+                print("Finished homing")
+                self.home_pose = np.array(self.robot.get_cartesian_position())
+                self.robot_init_H = self.cartesian_to_homo(self.home_pose)
 
 
     # NOTE: This is for debugging should remove this when needed

@@ -112,7 +112,8 @@ class OnrobotGripperStickOperator(Operator):
             gripper_state = None
             if self.controller_state.right_index_trigger > 0.5:
                 gripper_state = ONROBOT_CLOSE
-            elif self.controller_state.right_hand_trigger > 0.5:
+            # elif self.controller_state.right_hand_trigger > 0.5:
+            else:
                 gripper_state = ONROBOT_OPEN
             if gripper_state is not None:
                 self.robot.move(gripper_state)
