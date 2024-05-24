@@ -39,6 +39,7 @@ class KinovaArmStickOperator(Operator):
         controller_state_port,
         moving_average_limit,
         use_filter=False,
+        fix_orientation=False,
     ):
         self.notify_component_start('kinova arm stick operator')
 
@@ -81,6 +82,7 @@ class KinovaArmStickOperator(Operator):
         if use_filter:
             robot_init_cart = self._homo2cart(self.robot_init_H)
             self.comp_filter = Filter(robot_init_cart, comp_ratio=0.8)
+        self.fix_orientation = fix_orientation
 
         # Getting the bounds to perform linear transformation
         bounds_file = get_path_in_package(
@@ -273,8 +275,6 @@ class KinovaArmStickOperator(Operator):
             self.robot_init_H = self.cartesian_to_homo(self.home_pose)
             print("Pausing teleop")
 
-        # TODO: Add gripper control to onrobot operator
-
         if self.start_teleop:
             self.controller_moving_H = self.controller_state.right_affine
             current_robot_position = np.array(self.robot.get_cartesian_position())
@@ -288,6 +288,7 @@ class KinovaArmStickOperator(Operator):
 
             # Find the relative transformation in human hand space.
             H_HT_HI = np.linalg.pinv(H_HI_HH) @ H_HT_HH # Homo matrix that takes P_HT to P_HI
+            
 
             # Transformation matrix
             H_R_V=  [[0,1,0,0],
@@ -296,11 +297,16 @@ class KinovaArmStickOperator(Operator):
                     [0,0,0,1]]
 
             # Find the relative transform and apply it to robot initial position
+            # This transformation takes the human hand delta rotation to the robot space
             H_R_R= (np.linalg.pinv(H_R_V)@H_HT_HI@H_R_V)[:3,:3]
+            # This transformation takes the human hand delta translation to the robot space
             H_R_T= (np.linalg.pinv(H_R_V)@H_HT_HI@H_R_V)[:3,3]
+            # Compose delta rotation and translation into homogenous matrix
             H_F_H=np.block([[H_R_R,H_R_T.reshape(3,1)],[np.array([0,0,0]),1]])
-            H_RT_RH = H_RI_RH  @ H_F_H # Homo matrix that takes P_RT to P_RH
-
+            # Get target robot pose from homogenous delta matrix
+            H_RT_RH = H_RI_RH @ H_F_H # Homo matrix that takes P_RT to P_RH
+            if self.fix_orientation:
+                H_RT_RH[:3, :3] = H_RI_RH[:3, :3]
             self.robot_moving_H = copy(H_RT_RH)
             final_pose = self._homo2cart(self.robot_moving_H)
 
