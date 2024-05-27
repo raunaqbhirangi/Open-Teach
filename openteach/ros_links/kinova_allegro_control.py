@@ -8,12 +8,9 @@ from kinova_arm.controller import KinovaController
 from copy import deepcopy as copy
 
 
-
-
-
 KINOVA_JOINT_STATE_TOPIC = '/j2n6s300_driver/out/joint_state'
 KINOVA_CARTESIAN_STATE_TOPIC = '/j2n6s300_driver/out/tool_pose'
-KINOVA_HOME_VALUES = np.array([260.92, 198.69, 68.89, 344.24, 59.17, 35.39]) * np.pi / 180.0
+KINOVA_HOME_VALUES = np.array([4.22, 3.84, 1.47, 6.04, 0.90, 0.60])
 
 class DexArmControl():
     def __init__(self,record_type=None, robot_type='kinova'):
