@@ -1,5 +1,7 @@
 import os.path as path
 
+import numpy as np
+
 # VR detector 
 # Arm movement
 WRIST_HOME_STATE = {
@@ -15,8 +17,8 @@ WRIST_HOME_STATE = {
 OCULUS_NUM_KEYPOINTS = 24
 #VR_THUMB_BOUND_VERTICES = 8
 VR_THUMB_BOUND_VERTICES = 4
-GRIPPER_OPEN=0
-GRIPPER_CLOSE=1
+GRIPPER_OPEN=1
+GRIPPER_CLOSE=0
 
 ONROBOT_OPEN = 1100.
 ONROBOT_CLOSE = 0.
@@ -38,7 +40,7 @@ OCULUS_VIEW_LIMITS = {
 }
 
 VR_FREQ = 90
-BIMANUAL_VR_FREQ = 90
+BIMANUAL_VR_FREQ = 60
 LIBERO_FREQ = 20
 
 # XELA Sensor parameters
@@ -121,15 +123,34 @@ ARM_TELEOP_STOP = 0
 
 SCALE_FACTOR= 1000
 
-RIGHT_ARM_IP = "192.168.86.230" # For Right XArm
+RIGHT_ARM_IP = "192.168.1.211" # For Right XArm
 LEFT_ARM_IP = "192.168.86.216" # For Left XArm
 
 BIMANUAL_LEFT_HOME = [206,0,475,3.142,0,0]
-BIMANUAL_RIGHT_HOME = [206,0,475,3.142,0,0] 
+BIMANUAL_RIGHT_HOME = [206,0,275,3.142,0,0] 
 
 ROBOT_HOME_POSE_AA = [206.0, -0.0, 475, 3.142, 0.0, 0.0]
 ROBOT_HOME_JS = [0.072358, -0.95536, -0.040176,
                  0.661511, -0.032836, 1.616466, 0.047656]
+
+H_R_V = np.array( # this is for vention table 230 arm
+    [[0, 1, 0, 0],
+     [0, 0, 1, 0],
+     [1, 0, 0, 0],
+     [0, 0, 0, 1]]
+)
+H_R_V_star = np.array( # this is for vention table 230 arm
+[[0,1,0,0],
+ [0,0,1,0],
+ [-1,0,0,0],
+ [0,0,0,1]]
+)
+
+x_min, x_max = 206, 550
+y_min, y_max = -365, 260
+z_min, z_max = 100, 550    #232, 550
+ROBOT_WORKSPACE = np.array([[x_min, y_min, z_min], [x_max, y_max, z_max]])
+ROBOT_SERVO_MODE_STEP_LIMITS = np.array([-2, 2])
 
 # Oculus stick
 VR_TCP_HOST = "10.19.152.142"
