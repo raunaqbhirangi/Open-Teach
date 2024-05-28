@@ -110,15 +110,14 @@ class DexArmControl():
         self.onrobot.gripper_width(gripper_width, True)
 
     def home_hand(self):
-        self.onrobot.move_hand(ONROBOT_HOME_VALUES)
+        self.move_hand(ONROBOT_HOME_VALUES)
 
     def reset_hand(self):
         self.home_hand()
 
     # Full robot commands
     def move_robot(self, gripper_width, kinova_angles):
-        self.kinova.joint_movement(kinova_angles, False)
-        self.onrobot.hand_pose(gripper_width, False)
+        self.hand_pose(gripper_width, False)
 
     def home_robot(self):
         self.home_arm()

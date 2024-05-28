@@ -125,6 +125,14 @@ class DeployServer(Component):
                         print('Requested for sensor information.')
                         self._send_sensor_state()
                         continue
+
+                    if robot_action == b'reset':
+                        print('Resetting the robot')
+                        for robot in self._robots.keys():
+                            print(robot, self._robots[robot])
+                            self._robots[robot].home()
+                        self._send_robot_state()
+                        continue
                     
                     robot_action = pickle.loads(robot_action)
                     success = self._perform_robot_action(robot_action)
