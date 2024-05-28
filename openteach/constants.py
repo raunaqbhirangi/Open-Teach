@@ -40,7 +40,7 @@ OCULUS_VIEW_LIMITS = {
 }
 
 VR_FREQ = 90
-BIMANUAL_VR_FREQ = 60
+BIMANUAL_VR_FREQ = 250
 LIBERO_FREQ = 20
 
 # XELA Sensor parameters
@@ -148,7 +148,7 @@ H_R_V_star = np.array( # this is for vention table 230 arm
 
 x_min, x_max = 206, 550
 y_min, y_max = -365, 260
-z_min, z_max = 100, 550    #232, 550
+z_min, z_max = 0, 550    #232, 550
 ROBOT_WORKSPACE = np.array([[x_min, y_min, z_min], [x_max, y_max, z_max]])
 ROBOT_SERVO_MODE_STEP_LIMITS = np.array([-2, 2])
 

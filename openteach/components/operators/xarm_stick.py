@@ -42,13 +42,14 @@ def get_relative_affine(init_affine, current_affine):
 np.set_printoptions(precision=2, suppress=True)
 # Rotation should be filtered when it's being sent
 class Filter:
-    def __init__(self, state, comp_ratio=0.6):
+    def __init__(self, state, comp_ratio=0.3):
         self.pos_state = state[:3]
         self.ori_state = state[3:7]
         self.comp_ratio = comp_ratio
 
     def __call__(self, next_state):
-        self.pos_state = self.pos_state[:3] * self.comp_ratio + next_state[:3] * (1 - self.comp_ratio)
+        print(self.pos_state, next_state[:3])
+        self.pos_state = np.array(self.pos_state[:3]) * self.comp_ratio + np.array(next_state[:3]) * (1 - self.comp_ratio)
         ori_interp = Slerp([0, 1], Rotation.from_rotvec(
             np.stack([self.ori_state, next_state[3:7]], axis=0)),)
         self.ori_state = ori_interp([1 - self.comp_ratio])[0].as_rotvec()
@@ -60,6 +61,7 @@ class XArmOperator(Operator):
         self,
         host, 
         controller_state_port,
+        use_filter=False,
         gripper_port=None,
         cartesian_publisher_port = None,
         joint_publisher_port = None,
@@ -108,6 +110,10 @@ class XArmOperator(Operator):
         self.robot_init_H = self.robot_pose_aa_to_affine(home_pose)
         self._timer = FrequencyTimer(BIMANUAL_VR_FREQ)
 
+        self.use_filter = use_filter
+        robot_init_cart = self.affine_to_robot_pose_aa(self.robot_init_H)
+        self.comp_filter = Filter(robot_init_cart, comp_ratio=0.5)
+        
         # Class Variables
         self.resolution_scale =1
         self.arm_teleop_state = ARM_TELEOP_STOP
@@ -175,10 +181,14 @@ class XArmOperator(Operator):
         translation = affine[:3, 3] * SCALE_FACTOR
         rotation = R.from_matrix(affine[:3, :3]).as_rotvec()
         return np.concatenate([translation, rotation])
+    
+    def affine_to_robot_pose_quat(self, affine: np.ndarray) -> np.ndarray:
+        translation = affine[:3, 3] * SCALE_FACTOR
+        rotation = R.from_matrix(affine[:3, :3]).as_quat()
+        return np.concatenate([translation, rotation])
 
     # Apply retargeted angles to the robot
     def _apply_retargeted_angles(self, log=False):
-       
        # Get the controller state
         self.controller_state = self.controller_state_subscriber.recv_keypoints()
         
@@ -251,6 +261,9 @@ class XArmOperator(Operator):
             des_pose = des_translation + des_rotation
         else:
             des_pose = self.home_pose
+
+        if self.use_filter:
+            des_pose = self.comp_filter(des_pose)
 
         # We save the states here during teleoperation as saving directly at 90Hz seems to be too fast for XArm.
         self.gripper_publisher.pub_keypoints(self.gripper_correct_state,"gripper")

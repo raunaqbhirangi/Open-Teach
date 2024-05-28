@@ -2,12 +2,12 @@ defaults:
   - _self_
   - camera
   - network
-  - robot: onrobot_kinova
+  - robot: xarm_stick
   - override hydra/hydra_logging: disabled  
   - override hydra/job_logging: disabled 
 
-storage_path: extracted_data/cup_ball
-demo_num: 271
+storage_path: extracted_data/xarm_test
+demo_num: 0
 sim_env: false
 use_sensor: false
 host: ${host_address}
