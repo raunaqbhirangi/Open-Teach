@@ -62,6 +62,7 @@ class XArmOperator(Operator):
         host, 
         controller_state_port,
         use_filter=False,
+        fix_orientation=False,
         gripper_port=None,
         cartesian_publisher_port = None,
         joint_publisher_port = None,
@@ -114,6 +115,8 @@ class XArmOperator(Operator):
         robot_init_cart = self.affine_to_robot_pose_aa(self.robot_init_H)
         self.comp_filter = Filter(robot_init_cart, comp_ratio=0.5)
         
+        self.fix_orientation = fix_orientation
+
         # Class Variables
         self.resolution_scale =1
         self.arm_teleop_state = ARM_TELEOP_STOP
@@ -237,6 +240,8 @@ class XArmOperator(Operator):
             # Target
             target_translation = home_translation + relative_affine[:3, 3]
             target_rotation = home_rotation @ relative_affine[:3, :3]
+            if self.fix_orientation:
+                target_rotation = home_rotation
             
             target_affine = np.block([[target_rotation, target_translation.reshape(-1,1)], [0, 0, 0, 1]])
 

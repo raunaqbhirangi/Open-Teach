@@ -12,6 +12,7 @@ operators:
     _target_: openteach.components.operators.xarm_stick.XArmOperator
     host: ${host_address}
     use_filter: false
+    fix_orientation: false
     controller_state_port: ${transformed_position_keypoint_port}
     gripper_port: ${gripper_publish_port_right}
     cartesian_publisher_port: ${cartesian_publisher_port}
