@@ -46,7 +46,7 @@ class DeployServer(Component):
 
     def _perform_robot_action(self, robot_action_dict):
         try:
-            robot_order = ['xarm'] #['franka', 'allegro']
+            robot_order = ['xarm']
 
             for robot in robot_order:
                 if robot in robot_action_dict.keys():
@@ -58,26 +58,13 @@ class DeployServer(Component):
                         gripper_action = robot_action_dict[robot]['gripper']
                         cartesian_coords = robot_action_dict[robot]['cartesian']
 
-                        # gripper
-                        if gripper_action > 0.5: #400: # 0.5:
-                            self._robots[robot].set_gripper_state(800)
-                        else:
-                            self._robots[robot].set_gripper_state(0)
-                        
-                        # compute the cartesian coords given relative coords
-                        # current_pos = self._robots[robot].get_cartesian_state()['cartesian_position']
-                        # cartesian_coords = np.array(current_pos) + np.array(cartesian_coords)
-                        # delta = cartesian_coords
-                        # cartesian_coords = self.cart_pose
-                        # cartesian_coords[:3] += delta[:3]
+                        # self._robots[robot].set_desired_pose(cartesian_coords, 800 if gripper_action > 0.5 else 0)
+                        self._robots[robot].set_desired_pose(cartesian_coords, gripper_action) # variant 3
 
-                        # cartesian
-                        # self._robots[robot].arm_control(cartesian_coords)
-                        self._robots[robot].set_desired_cartesian_pose(cartesian_coords)
-                        self._robots[robot].continue_control()
 
                     concat_action = np.concatenate([robot_action_dict[robot]['cartesian'], robot_action_dict[robot]['gripper']])       
                     print('Applying action {} on robot: {}'.format(concat_action, robot))
+
             return True
         except Exception as e:
             print(f"Error: {e}")
@@ -105,11 +92,14 @@ class DeployServer(Component):
         for robot_name in self._robots.keys():
             if robot_name == 'xarm':
                 cartesian_state = self._robots[robot_name].get_cartesian_state()
+                # joint_state = self._robots[robot_name].get_joint_state()
                 gripper_state = self._robots[robot_name].get_gripper_state()
                 robot_state = np.concatenate([
                     cartesian_state['position'],
                     cartesian_state['orientation'],
-                    gripper_state['position']
+                    # joint_state['position'],
+                    # gripper_state['position']
+                    [1 if gripper_state['position'][0] > 400 else 0]
                 ])
                 self.cart_pose = robot_state[:6]
                 data[robot_name] = robot_state
@@ -150,7 +140,6 @@ class DeployServer(Component):
                 self.timer.start_loop()
 
                 if self.timer.check_time(POLICY_FREQ):
-                    # robot_action = pickle.loads(self.deployment_socket.recv())
                     print('Waiting for robot action.')
                     robot_action = self.deployment_socket.recv()
 
@@ -173,9 +162,7 @@ class DeployServer(Component):
                     print("Received robot action: {}".format(robot_action))
                     success = self._perform_robot_action(robot_action)
                     print('success: {}'.format(success))
-                    # More accurate sleep
-                    
-                    self.timer.end_loop()
+                    # import ipdb; ipdb.set_trace()
 
                     if success:
                         print('Before sending the states')
@@ -184,13 +171,10 @@ class DeployServer(Component):
                         print('Applied robot action.')
                     else:
                         self.deployment_socket.send("Command failed!")
+                    
+                self._continue_robot_action()
                 
-                else:
-                    self._continue_robot_action()
-            # except:
-            #     print('Illegal values passed. Terminating session.')
-            #     break
+                self.timer.end_loop()
 
-        # self.visualizer_process.join()
         print('Closing robot deployer component.')
         self.deployment_socket.close()

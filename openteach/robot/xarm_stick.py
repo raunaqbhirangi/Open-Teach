@@ -3,10 +3,13 @@ from .robot import RobotWrapper
 from openteach.utils.network import ZMQKeypointSubscriber
 import numpy as np
 import time
+from openteach.constants import GRIPPER_OPEN, GRIPPER_CLOSE
 
 class XArm(RobotWrapper):
-    def __init__(self, ip, host_address, record_type=None):
-        self._controller = DexArmControl(ip=ip,record_type=record_type)
+    def __init__(self, ip, host_address, gripper_start_state, record_type=None):
+        if type(gripper_start_state) is str:
+            gripper_start_state = GRIPPER_OPEN if gripper_start_state == 'open' else GRIPPER_CLOSE
+        self._controller = DexArmControl(ip=ip, gripper_start_state=gripper_start_state * 800.0, record_type=record_type)
         self.host_address = host_address
         self._data_frequency = 90
 
@@ -52,7 +55,7 @@ class XArm(RobotWrapper):
     
     def get_joint_position(self):
         return self._controller.get_arm_position()
-    
+
     def get_cartesian_position(self):
         return self._controller.get_arm_cartesian_coords()
 
@@ -75,8 +78,8 @@ class XArm(RobotWrapper):
     def arm_control(self, cartesian_coords):
         self._controller.arm_control(cartesian_coords)
     
-    def set_desired_cartesian_pose(self, cartesian_coords):
-        self._controller.set_desired_cartesian_pose(cartesian_coords)
+    def set_desired_pose(self, cartesian_coords, gripper_state):
+        self._controller.set_desired_pose(cartesian_coords, gripper_state)
 
     def continue_control(self):
         self._controller.continue_control()
