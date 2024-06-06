@@ -7,7 +7,7 @@ from multiprocessing import Process
 from openteach.components import Component
 from openteach.utils.network import create_response_socket
 from openteach.utils.timer import FrequencyTimer
-from openteach.constants import DEPLOY_FREQ, POLICY_FREQ #, VR_FREQ
+from openteach.constants import DEPLOY_FREQ, GRIPPER_CLOSE, GRIPPER_OPEN, POLICY_FREQ #, VR_FREQ
 
 class DeployServer(Component):
     def __init__(self, configs):
@@ -31,8 +31,15 @@ class DeployServer(Component):
     def _init_robot_subscribers(self):
         robot_controllers = hydra.utils.instantiate(self.configs.robot.controllers)
         self._robots = dict()
-        for robot in robot_controllers:
+        for ri, robot in enumerate(robot_controllers):
             self._robots[robot.name] = robot
+            if robot.name == 'xarm':
+                gripper_state = (
+                    GRIPPER_OPEN 
+                    if self.configs.robot.controllers[ri].gripper_start_state == 'open' 
+                    else GRIPPER_CLOSE
+                )
+                self.gripper_state = gripper_state
 
     def _init_sensor_subscribers(self):
         xela_controllers = hydra.utils.instantiate(self.configs.robot.xela_controllers)
@@ -55,7 +62,14 @@ class DeployServer(Component):
                         return False
                     
                     if robot == 'xarm':
+                        # TODO: Maybe fix this if you want intermediate actions
                         gripper_action = robot_action_dict[robot]['gripper']
+                        # gripper_action = np.around(gripper_action)
+                        # if gripper_action == GRIPPER_OPEN:
+                        #     self.gripper_state = GRIPPER_OPEN
+                        # elif gripper_action == GRIPPER_CLOSE:
+                        #     self.gripper_state = GRIPPER_CLOSE
+
                         cartesian_coords = robot_action_dict[robot]['cartesian']
 
                         # self._robots[robot].set_desired_pose(cartesian_coords, 800 if gripper_action > 0.5 else 0)
@@ -99,7 +113,9 @@ class DeployServer(Component):
                     cartesian_state['orientation'],
                     # joint_state['position'],
                     # gripper_state['position']
-                    [1 if gripper_state['position'][0] > 400 else 0]
+                    # TODO: Figure out how to add gripper state as open or closed here
+                    [1 if gripper_state['position'][0] > 750 else 0]
+                    # [self.gripper_state]
                 ])
                 self.cart_pose = robot_state[:6]
                 data[robot_name] = robot_state
