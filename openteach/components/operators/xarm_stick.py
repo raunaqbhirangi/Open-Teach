@@ -43,7 +43,7 @@ def get_relative_affine(init_affine, current_affine):
 np.set_printoptions(precision=2, suppress=True)
 # Rotation should be filtered when it's being sent
 class Filter:
-    def __init__(self, state, comp_ratio=0.3, cutoff_freq=1/30, fs=1.0, order=2):
+    def __init__(self, state, comp_ratio=0.3, cutoff_freq=1/30, fs=0.8, order=2):
         self.pos_state = state[:3]
         self.ori_state = state[3:7]
         self.comp_ratio = comp_ratio

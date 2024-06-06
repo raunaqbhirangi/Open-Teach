@@ -1,0 +1,9 @@
+reskin_controllers:
+
+    _target_: openteach.components.sensors.reskin.ReskinSensor
+
+reskin_recorders:
+
+    _target_: openteach.components.recorders.reskin.ReskinRecorder
+    controller_configs: ???
+    storage_path: ???

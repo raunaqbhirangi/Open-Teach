@@ -24,13 +24,14 @@ operators:
 controllers: 
   -
     _target_: openteach.robot.xarm_stick.XArm
+
+    # Reskin stream
+    _target_: openteach.components.sensors.reskin.ReskinSensor
+
     ip: ${right_xarm_ip}
     host_address: ${host_address}
     gripper_start_state: ${robot.gripper_start_state}
     # record: False
-
-    # Reskin stream
-    # _target_: openteach.components.sensors.reskin.ReskinSensor
 
 # Information to be recorded for the robot 
 recorded_data:
