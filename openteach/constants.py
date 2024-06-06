@@ -53,6 +53,10 @@ XELA_PALM_NUM_TAXELS = 24
 XELA_FINGERTIP_NUM_TAXELS= 30
 XELA_FINGER_NUM_TAXELS= 16 
 XELA_NUM_TAXELS = 16
+
+# Reskin Sensor parameters
+RESKIN_FPS = 100
+
 # Robot parameters
 
 # Allegro
