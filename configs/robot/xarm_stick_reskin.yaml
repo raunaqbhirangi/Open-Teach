@@ -15,7 +15,7 @@ operators:
     host: ${host_address}
     controller_state_port: ${transformed_position_keypoint_port}
     gripper_port: ${gripper_publish_port_right}
-    cartesian_publisher_port: ${cartesian_publisher_port}s
+    cartesian_publisher_port: ${cartesian_publisher_port}
     joint_publisher_port: ${joint_publisher_port}
     cartesian_command_publisher_port: ${cartesian_command_publisher_port}
     gripper_start_state: ${robot.gripper_start_state}
