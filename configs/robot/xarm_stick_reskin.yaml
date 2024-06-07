@@ -31,7 +31,10 @@ controllers:
 
 xela_controllers:
   -
-    _target_: openteach.components.sensors.reskin.ReskinSensors
+    _target_: openteach.components.sensors.reskin.ReskinSensorSubscriber
+    stream_configs:
+      host: ${sensor_host_address}
+      port: ${reskin_publisher_port}
 
 # Information to be recorded for the robot 
 recorded_data:

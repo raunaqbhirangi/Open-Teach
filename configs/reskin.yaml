@@ -1,9 +1,13 @@
-reskin_controllers:
+defaults:
+  - _self_
+  - network
+  - override hydra/hydra_logging: disabled  
+  - override hydra/job_logging: disabled 
 
-    _target_: openteach.components.sensors.reskin.ReskinSensor
+stream_configs:
+  host: ${sensor_host_address}
+  port: ${reskin_publisher_port}
 
-reskin_recorders:
-
-    _target_: openteach.components.recorders.reskin.ReskinRecorder
-    controller_configs: ???
-    storage_path: ???
+reskin_config:
+  port: ${reskin_port}
+  num_mags: ${reskin_num_mags}
