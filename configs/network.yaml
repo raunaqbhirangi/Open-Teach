@@ -42,4 +42,8 @@ cartesian_publisher_port_left: 8116
 joint_publisher_port_left: 8117
 cartesian_command_publisher_port_left: 8121
 
+sensor_host_address: '172.24.71.211'
+reskin_publisher_port: 12005
 
+reskin_port: /dev/ttyACM0
+reskin_num_mags: 10

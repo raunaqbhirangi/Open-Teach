@@ -1,10 +1,12 @@
 import os
 import hydra
 from abc import ABC
+
+from openteach.components.sensors.reskin import ReskinSensorPublisher
 from .recorders.image import RGBImageRecorder, DepthImageRecorder, FishEyeImageRecorder
 from .recorders.robot_state import RobotInformationRecord
 from .recorders.sim_state import SimInformationRecord
-from .recorders.sensors import XelaSensorRecorder, ReskinSensorRecorder
+from .recorders.sensors import XelaSensorRecorder, ReskinSensorZMQRecorder
 from .sensors import *
 from multiprocessing import Process
 from openteach.constants import *
@@ -84,6 +86,22 @@ class FishEyeCameras(ProcessInstantiator):
                 args = (cam_idx, )
             ))
 
+class ReskinSensors(ProcessInstantiator):
+    def __init__(self, configs):
+        super().__init__(configs)
+        self._init_reskin_processes()
+    
+    def _start_component(self):
+        component = ReskinSensorPublisher(
+            stream_configs = self.configs.stream_configs,
+            reskin_config = self.configs.reskin_config
+        )
+        component.stream()
+    
+    def _init_reskin_processes(self):
+        self.processes.append(Process(
+            target = self._start_component,
+        ))
 
 class TeleOperator(ProcessInstantiator):
     """
@@ -275,19 +293,19 @@ class Collector(ProcessInstantiator):
     #Function to start the xela sensor recorders
     def _start_xela_component(self, controller_config):
         print("Starting Xela sensor recorder")
-        print(controller_config)
         if "Xela" in controller_config["_target_"]:
             component = XelaSensorRecorder(
                 controller_configs=controller_config,
                 storage_path=self._storage_path
             )
         elif "Reskin" in controller_config["_target_"]:
-            component = ReskinSensorRecorder(
+            component = ReskinSensorZMQRecorder(
                 controller_configs=controller_config,
                 storage_path=self._storage_path
             )
         else:
             raise NotImplementedError
+        print("About to stream component")
         component.stream()
 
     def _start_reskin_component(self, controller_config):
@@ -296,6 +314,14 @@ class Collector(ProcessInstantiator):
             storage_path=self._storage_path
         )
         component.stream()
+
+    def _init_sensors(self):
+        for controller_config in self.configs.robot.xela_controllers:
+            if "Reskin" in controller_config["_target_"]:
+                self.processes.append(Process(
+                    target = self._start_reskin_component,
+                    args = (controller_config, )
+                ))
 
     # Function to start the sensor recorders
     def _init_sensor_recorders(self):
