@@ -6,6 +6,7 @@ from reskin.msg import ReskinStamped
 
 RESKIN_SERVER_TOPIC = '/ReskinStamped'
 
+        
 class ReskinSensorStream():
     def __init__(self):
         try:

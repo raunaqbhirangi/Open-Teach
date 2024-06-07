@@ -42,6 +42,7 @@ class DeployServer(Component):
                 self.gripper_state = gripper_state
 
     def _init_sensor_subscribers(self):
+        # TODO: Figure this out for ReSkin
         xela_controllers = hydra.utils.instantiate(self.configs.robot.xela_controllers)
         self._sensors = dict()
         self._sensors['xela'] = xela_controllers[0] # There is only 1 controller

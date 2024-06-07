@@ -274,10 +274,20 @@ class Collector(ProcessInstantiator):
 
     #Function to start the xela sensor recorders
     def _start_xela_component(self, controller_config):
-        component = XelaSensorRecorder(
-            controller_configs=controller_config,
-            storage_path=self._storage_path
-        )
+        print("Starting Xela sensor recorder")
+        print(controller_config)
+        if "Xela" in controller_config["_target_"]:
+            component = XelaSensorRecorder(
+                controller_configs=controller_config,
+                storage_path=self._storage_path
+            )
+        elif "Reskin" in controller_config["_target_"]:
+            component = ReskinSensorRecorder(
+                controller_configs=controller_config,
+                storage_path=self._storage_path
+            )
+        else:
+            raise NotImplementedError
         component.stream()
 
     def _start_reskin_component(self, controller_config):
