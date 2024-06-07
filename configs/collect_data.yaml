@@ -13,7 +13,6 @@ use_sensor: true
 host: ${host_address}
 
 
-
 hydra:  
   output_subdir: null  
   run:  
