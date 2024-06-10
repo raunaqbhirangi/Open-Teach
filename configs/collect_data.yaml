@@ -6,12 +6,17 @@ defaults:
   - override hydra/hydra_logging: disabled  
   - override hydra/job_logging: disabled 
 
-storage_path: extracted_data/0607_rand
+# storage_path: /home/raunaq/code/Open-Teach/extracted_data/0607_rand_test
+
+# task_name: test
+# storage_path: extracted_data/${oc.env:DATE}_${task_name}
+
+storage_path: extracted_data/0607_test
+
 demo_num: 0
 sim_env: false
 use_sensor: true
 host: ${host_address}
-
 
 hydra:  
   output_subdir: null  
