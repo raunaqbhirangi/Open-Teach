@@ -57,6 +57,9 @@ class ReskinSensorSubscriber(Component):
 
         self.timer = FrequencyTimer(100)
 
+    def __repr__(self):
+        return "reskin"
+
     def get_sensor_state(self):
         reskin_state = self.reskin_subscriber.recv_keypoints()
         return reskin_state

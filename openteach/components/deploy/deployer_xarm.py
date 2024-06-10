@@ -45,7 +45,8 @@ class DeployServer(Component):
         # TODO: Figure this out for ReSkin
         xela_controllers = hydra.utils.instantiate(self.configs.robot.xela_controllers)
         self._sensors = dict()
-        self._sensors['xela'] = xela_controllers[0] # There is only 1 controller
+        for si, sensor in enumerate(xela_controllers):
+            self._sensors[repr(sensor)] = sensor
     
     def _reset(self):
         for robot in self._robots.keys():
@@ -161,8 +162,15 @@ class DeployServer(Component):
                     robot_action = self.deployment_socket.recv()
 
                     if robot_action == b'get_state':
+                        print('Requested for state information.')
+                        # self._send_robot_state()
+                        self._send_both_state()
+                        continue
+
+                    if robot_action == b'get_robot_state':
                         print('Requested for robot state information.')
                         self._send_robot_state()
+                        # self._send_both_state()
                         continue
 
                     if robot_action == b'get_sensor_state':
@@ -183,8 +191,8 @@ class DeployServer(Component):
 
                     if success:
                         print('Before sending the states')
-                        # self._send_both_state()
-                        self._send_robot_state()
+                        self._send_both_state()
+                        # self._send_robot_state()
                         print('Applied robot action.')
                     else:
                         self.deployment_socket.send("Command failed!")

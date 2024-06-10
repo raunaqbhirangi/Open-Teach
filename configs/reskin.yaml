@@ -11,3 +11,8 @@ stream_configs:
 reskin_config:
   port: ${reskin_port}
   num_mags: ${reskin_num_mags}
+
+hydra:  
+  output_subdir: null  
+  run:  
+    dir: .
