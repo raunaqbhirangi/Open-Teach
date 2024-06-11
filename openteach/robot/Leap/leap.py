@@ -3,8 +3,8 @@ import math
 from openteach.robot import RobotWrapper
 from LEAP_Hand_API.python.LeapController import LeapNode
 from openteach.robot.robot import RobotWrapper
-PORT = 'COM3'
-BAUDRATE = 4000000
+PORT = 'usbserial-FT7WBF78'
+BAUDRATE = 3000000
 class LeapHand(RobotWrapper):
     def __init__(self):
         self._controller = LeapNode(PORT,BAUDRATE)

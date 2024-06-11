@@ -6,11 +6,11 @@ from openteach.utils.files import *
 class LeapKDL(object):
     def __init__(self):
         # Getting the URDF path
-        urdf_path = get_path_in_package("robot/assets/allegro_hand_right.urdf")
+        urdf_path = get_path_in_package("robot/assets/robots.urdf")
 
         # Loading Allegro Hand configs
-        self.hand_configs = get_yaml_data(get_path_in_package("robot/allegro/configs/allegro_info.yaml"))
-        self.finger_configs = get_yaml_data(get_path_in_package("robot/allegro/configs/allegro_link_info.yaml"))
+        self.hand_configs = get_yaml_data(get_path_in_package("robot/Leap/configs/leap_info.yaml"))
+        self.finger_configs = get_yaml_data(get_path_in_package("robot/Leap/configs/leap_link_info.yaml"))
 
         # Parsing chains from the urdf file
         self.chains = {}

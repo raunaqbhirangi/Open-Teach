@@ -12,8 +12,8 @@ class LeapKinematicControl(ABC):
         np.set_printoptions(suppress = True)
 
         # Loading the Allegro Hand configs
-        self.hand_configs = get_yaml_data(get_path_in_package("robot/allegro/configs/allegro_info.yaml"))
-        self.finger_configs = get_yaml_data(get_path_in_package("robot/allegro/configs/allegro_link_info.yaml"))
+        self.hand_configs = get_yaml_data(get_path_in_package("robot/Leap/configs/leap_info.yaml"))
+        self.finger_configs = get_yaml_data(get_path_in_package("robot/Leap/configs/leap_link_info.yaml"))
         self.bound_info = get_yaml_data(get_path_in_package("robot/Leap/configs/leap_bounds.yaml"))
         
         self.time_steps = self.bound_info['time_steps']

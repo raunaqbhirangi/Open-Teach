@@ -1,0 +1,71 @@
+#  Finger info
+links_info:
+
+  # Base link 
+  base:
+    name: 'Base'
+    link: 'base_link'
+
+  # Index link
+  index:
+    name: 'Index'
+    link: '0'
+    offset: 0
+    joint_min: 
+      - 1.506393677
+      - 2.819404874
+      - 2.676811474
+      - 2.752035165
+    joint_max: 
+      - 3.773576376
+      - 5.29829601
+      - 5.079082656
+      - 5.166523652
+
+  # Middle link
+  middle:
+    name: 'Middle'
+    link: '4'
+    offset: 4
+    joint_min: 
+      - 2.442064689
+      - 2.810329162 
+      - 2.663023373
+      - 2.764252469
+    joint_max: 
+      - 3.699923481
+      - 5.350481355
+      - 5.062152962
+      - 5.183278813
+  
+  # Ring link
+  ring:
+    name: 'Ring'
+    link: '8'
+    offset: 8
+    joint_min: 
+      - 2.649235272
+      - 2.781182163 
+      - 2.663023373
+      - 2.759714613
+    joint_max: 
+      - 4.669453881
+      - 5.378057557
+      - 5.079082656
+      - 5.187991202
+
+  # Thumb link
+  thumb:
+    name: 'Thumb'
+    link: '12'
+    offset: 12
+    joint_min: 
+      - 2.33472694
+      - 0.312937535
+      - 1.79175501
+      - 1.788613417
+    joint_max: 
+      - 5.094267021
+      - 6.209532413
+      - 4.947135765
+      - 5.013109211
