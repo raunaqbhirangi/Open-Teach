@@ -6,6 +6,7 @@ from openteach.robot.robot import RobotWrapper
 PORT = 'usbserial-FT7WBF78'
 BAUDRATE = 3000000
 class LeapHand(RobotWrapper):
+    #Python API controller
     def __init__(self):
         self._controller = LeapNode(PORT,BAUDRATE)
         self._data_frequency = 30

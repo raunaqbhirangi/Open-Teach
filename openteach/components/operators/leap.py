@@ -191,7 +191,6 @@ class LeapHandOperator(Operator):
             print("No ring")
             pass
 
-        '''
         # Movement for the thumb finger with option to freeze the finger
         if not self.finger_configs['freeze_thumb'] and not self.finger_configs['no_thumb']:
             desired_joint_angles = self.thumb_angle_calculator(hand_keypoints['thumb'][-1], desired_joint_angles) # Passing just the tip coordinates
@@ -200,7 +199,6 @@ class LeapHandOperator(Operator):
         else:
             print("No thumb")
             pass
-        
-        '''
+           
         # Move the robot
         self.robot.move(desired_joint_angles)
