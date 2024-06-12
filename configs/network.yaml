@@ -1,8 +1,8 @@
-host_address: '172.24.71.211'
+host_address: '10.19.194.95'
 left_xarm_ip: '192.168.86.216'
 right_xarm_ip: '192.168.1.211'
 
-teleop_address: '172.24.71.211'
+teleop_address: '10.19.194.95'
 # Transformation ports
 oculus_reciever_port: 8087
 left_hand_receiver_port: 8110
