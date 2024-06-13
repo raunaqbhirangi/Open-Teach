@@ -42,23 +42,35 @@ def get_relative_affine(init_affine, current_affine):
 
 np.set_printoptions(precision=2, suppress=True)
 # Rotation should be filtered when it's being sent
+class OldFilter:
+    def __init__(self, state, comp_ratio=0.3):
+        self.pos_state = state[:3]
+        self.ori_state = state[3:7]
+        self.comp_ratio = comp_ratio
+
+    def __call__(self, next_state):
+        print(self.pos_state, next_state[:3])
+        self.pos_state = np.array(self.pos_state[:3]) * self.comp_ratio + np.array(next_state[:3]) * (1 - self.comp_ratio)
+        ori_interp = Slerp([0, 1], Rotation.from_rotvec(
+            np.stack([self.ori_state, next_state[3:7]], axis=0)),)
+        self.ori_state = ori_interp([1 - self.comp_ratio])[0].as_rotvec()
+        return np.concatenate([self.pos_state, self.ori_state])
+
 class Filter:
-    def __init__(self, state, comp_ratio=0.3, cutoff_freq=1/30, fs=0.8, order=2):
+    def __init__(self, state, comp_ratio=0.3, cutoff_freq=10.0, fs=90.0, order=2):
         self.pos_state = state[:3]
         self.ori_state = state[3:7]
         self.comp_ratio = comp_ratio
         self.cutoff_freq = cutoff_freq
-        self.fs = fs  # Sampling frequency
+        self.fs = fs
         self.order = order
-        # Create buffers for filtered output to stabilize initial outputs
         self.filtered_pos = np.array([self.pos_state] * 10)
-        # self.filtered_ori = np.array([self.ori_state] * 10)
 
         # Create a Butterworth filter
         self.b, self.a = butter(self.order, self.cutoff_freq / (0.5 * fs), btype='low')
 
     def __call__(self, next_state):
-        # Calculate new interpolated state
+        # print(self.pos_state, next_state[:3])
         new_pos = np.array(self.pos_state) * self.comp_ratio + np.array(next_state[:3]) * (1 - self.comp_ratio)
         ori_interp = Slerp([0, 1], Rotation.from_rotvec(
             np.stack([self.ori_state, next_state[3:7]], axis=0)))
@@ -67,7 +79,6 @@ class Filter:
         self.filtered_pos = np.vstack((self.filtered_pos[1:], new_pos))
         # Apply Butterworth filter
         filtered_pos = filtfilt(self.b, self.a, self.filtered_pos, axis=0)[-1]
-        # filtered_ori = filtfilt(self.b, self.a, self.filtered_ori, axis=0)[-1]
         self.pos_state = filtered_pos
         self.ori_state = new_ori
 
@@ -79,7 +90,7 @@ class XArmOperator(Operator):
         self,
         host, 
         controller_state_port,
-        use_filter=True,
+        use_filter=False,
         fix_orientation=False,
         gripper_port=None,
         cartesian_publisher_port = None,

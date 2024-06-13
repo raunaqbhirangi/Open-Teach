@@ -11,7 +11,7 @@ defaults:
 # task_name: test
 # storage_path: extracted_data/${oc.env:DATE}_${task_name}
 
-storage_path: extracted_data/0607_test
+storage_path: extracted_data/0612_picknplace_cups
 
 demo_num: 0
 sim_env: false

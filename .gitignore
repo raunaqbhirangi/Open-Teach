@@ -34,3 +34,5 @@ logs/*
 open_teach.egg-info/
 kill_server.sh
 configs/collect_data_*
+
+outputs/*

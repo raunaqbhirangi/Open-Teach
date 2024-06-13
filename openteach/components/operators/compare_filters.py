@@ -18,7 +18,7 @@ class OldFilter:
         return np.concatenate([self.pos_state, self.ori_state])
 
 class Filter:
-    def __init__(self, state, comp_ratio=0.5, cutoff_freq=2/25, fs=1.0, order=2):
+    def __init__(self, state, comp_ratio=0.5, cutoff_freq=15.0, fs=90.0, order=2):
         self.pos_state = state[:3]
         self.ori_state = state[3:]
         self.comp_ratio = comp_ratio
