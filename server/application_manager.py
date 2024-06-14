@@ -1,7 +1,13 @@
+from collections import deque
+import io
 import zmq
 import base64
 import numpy as np
 import pickle
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_agg import FigureCanvasAgg
+import logging
+logger = logging.getLogger(__name__)
 
 class VideoStreamer(object):
     def __init__(self, host, cam_port):
@@ -28,8 +34,16 @@ class VideoStreamer(object):
 
 
 class ReskinStreamer(object):
-    def __init__(self, host, reskin_port):
+    def __init__(self, host, reskin_port, num_mags):
         self._init_socket(host, reskin_port)
+        self.num_mags = num_mags
+        self.num_sensors = int(num_mags / 5)
+        self._data_history = [deque(maxlen=3000) for _ in range(self.num_sensors)]
+        self._baseline = np.zeros((num_mags * 3))
+        for _ in range(100):
+            data = self._get_data()
+            for idx in range(self.num_sensors):
+                self._data_history[idx].append(data[15*idx:15*(idx+1)])
 
     def _init_socket(self, host, port):
         self.context = zmq.Context()
@@ -41,13 +55,40 @@ class ReskinStreamer(object):
     def _get_data(self):
         raw_data = self.socket.recv()
         data = raw_data.lstrip(b"reskin ")
-        data = pickle.loads(data)
+        data = np.array(pickle.loads(data)["sensor_values"]) - self._baseline
+        # self._data_history.append(data)
         return data
     
+    def _update_baseline(self):
+        baseline_data = []
+        for _ in range(20):
+            data = self._get_data()
+            baseline_data.append(data)
+        self._baseline = np.median(baseline_data, axis=0)
+
     def yield_frames(self):
+        fig = Figure()
+        axs = fig.subplots(nrows=2, ncols=1)
+        [ax.set_xlim(0, 3000) for ax in axs]
+        [ax.set_title(f"Sensor {idx+1}") for idx, ax in enumerate(axs)]
+        lines = []
+        for dh, ax in zip(self._data_history, axs):
+            lines.append(ax.plot(dh))
+        fig.tight_layout()
         while True:
-            # TODO: Create a plot and stream it here
-            yield self._get_data()
+            data = self._get_data()
+            for idx in range(self.num_sensors):
+                self._data_history[idx].append(data[15*idx:15*(idx+1)])
+            for line_set, dh, ax in zip(lines, self._data_history, axs):
+                [line.set_data(range(len(dh)), d) for line,d in zip(line_set, zip(*dh))]
+            # [line.set_data(range(len(self._data_history)), d) for line,d in zip(lines, zip(*self._data_history))]
+            output = io.BytesIO()
+            FigureCanvasAgg(fig).print_png(output)
+            data = np.asarray(output.getbuffer(), dtype=np.uint8)
+            del output
+            # encoded_data = np.fromstring(base64.b64decode(data['rgb_image']), np.uint8)
+            yield (b'--frame\r\n'
+                   b'Content-Type: image/png\r\n\r\n' + data.tobytes() + b'\r\n')
 
 
 class MonitoringApplication(object):
@@ -61,12 +102,16 @@ class MonitoringApplication(object):
         # Initializing the streamers        
         self._init_cam_streamers()
         self._init_graph_streamer()
+        logger.info("Initialized camera streamers")
         try:
             self.reskin_port = configs.reskin_publisher_port
+            self.reskin_num_mags = configs.reskin_num_mags
             self._init_reskin_streamer()
-        except AttributeError:
-            print("Reskin streamer not initialized")
-
+            logger.info("Initialized reskin streamer")
+        except AttributeError as e:
+            self.reskin_num_mags = 0
+            logger.warning("Reskin streamer not initialized")
+            logger.info(e)
         # Initializing frequency checkers
         self._init_frequency_checkers()
         
@@ -92,7 +137,8 @@ class MonitoringApplication(object):
     def _init_reskin_streamer(self):
         self.reskin_streamer = ReskinStreamer(
             host = self.camera_address,
-            reskin_port = self.reskin_port
+            reskin_port = self.reskin_port,
+            num_mags = self.reskin_num_mags
         )
     
     def get_reskin_streamer(self):

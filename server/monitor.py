@@ -13,7 +13,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-    return render_template('index.html', num_cams = monitor_info.num_cams)
+    return render_template('index.html', num_cams = monitor_info.num_cams, reskin_num_mags = monitor_info.reskin_num_mags)
 
 @app.route('/cam_<int:id>_feed')
 def video_feed(id):
