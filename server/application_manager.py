@@ -27,6 +27,29 @@ class VideoStreamer(object):
                    b'Content-Type: image/jpeg\r\n\r\n' + self._get_image() + b'\r\n')  # concat frame one by one and show result
 
 
+class ReskinStreamer(object):
+    def __init__(self, host, reskin_port):
+        self._init_socket(host, reskin_port)
+
+    def _init_socket(self, host, port):
+        self.context = zmq.Context()
+        self.socket = self.context.socket(zmq.SUB)
+        self.socket.setsockopt(zmq.CONFLATE, 1)
+        self.socket.connect('tcp://{}:{}'.format(host, port))
+        self.socket.setsockopt(zmq.SUBSCRIBE, bytes("reskin", 'utf-8'))
+
+    def _get_data(self):
+        raw_data = self.socket.recv()
+        data = raw_data.lstrip(b"reskin ")
+        data = pickle.loads(data)
+        return data
+    
+    def yield_frames(self):
+        while True:
+            # TODO: Create a plot and stream it here
+            yield self._get_data()
+
+
 class MonitoringApplication(object):
     def __init__(self, configs):
         # Loading the network configurations
@@ -38,6 +61,11 @@ class MonitoringApplication(object):
         # Initializing the streamers        
         self._init_cam_streamers()
         self._init_graph_streamer()
+        try:
+            self.reskin_port = configs.reskin_publisher_port
+            self._init_reskin_streamer()
+        except AttributeError:
+            print("Reskin streamer not initialized")
 
         # Initializing frequency checkers
         self._init_frequency_checkers()
@@ -60,6 +88,15 @@ class MonitoringApplication(object):
                     cam_port = self.port_offset + idx
                 )
             )
+
+    def _init_reskin_streamer(self):
+        self.reskin_streamer = ReskinStreamer(
+            host = self.camera_address,
+            reskin_port = self.reskin_port
+        )
+    
+    def get_reskin_streamer(self):
+        return self.reskin_streamer
 
     def get_cam_streamer(self, id):
         return self.cam_streamers[id - 1]

@@ -22,5 +22,12 @@ def video_feed(id):
         mimetype = 'multipart/x-mixed-replace; boundary=frame'
     )
 
+@app.route('/reskin_feed')
+def reskin_feed():
+    return Response(
+        monitor_info.get_reskin_streamer().yield_frames(), 
+        mimetype = 'multipart/x-mixed-replace; boundary=frame'
+    )
+
 if __name__ == '__main__':
     app.run(threaded = True)
