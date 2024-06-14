@@ -38,8 +38,10 @@ class ReskinStreamer(object):
         self._init_socket(host, reskin_port)
         self.num_mags = num_mags
         self.num_sensors = int(num_mags / 5)
-        self._data_history = [deque(maxlen=3000) for _ in range(self.num_sensors)]
-        self._baseline = np.zeros((num_mags * 3))
+        self.queue_size = 1500
+        self._data_history = [deque(maxlen=self.queue_size) for _ in range(self.num_sensors)]
+        self._baseline = np.zeros(15*self.num_sensors)
+        self._update_baseline()
         for _ in range(100):
             data = self._get_data()
             for idx in range(self.num_sensors):
@@ -69,23 +71,29 @@ class ReskinStreamer(object):
     def yield_frames(self):
         fig = Figure()
         axs = fig.subplots(nrows=2, ncols=1)
-        [ax.set_xlim(0, 3000) for ax in axs]
+        [ax.set_xlim(0, self.queue_size) for ax in axs]
         [ax.set_title(f"Sensor {idx+1}") for idx, ax in enumerate(axs)]
         lines = []
         for dh, ax in zip(self._data_history, axs):
             lines.append(ax.plot(dh))
         fig.tight_layout()
+        update_freq = 10
+        record_index = 0
         while True:
-            data = self._get_data()
+            new_data = self._get_data()
             for idx in range(self.num_sensors):
-                self._data_history[idx].append(data[15*idx:15*(idx+1)])
+                self._data_history[idx].append(new_data[15*idx:15*(idx+1)])
             for line_set, dh, ax in zip(lines, self._data_history, axs):
                 [line.set_data(range(len(dh)), d) for line,d in zip(line_set, zip(*dh))]
+                ax.relim()
+                ax.autoscale_view()
             # [line.set_data(range(len(self._data_history)), d) for line,d in zip(lines, zip(*self._data_history))]
-            output = io.BytesIO()
-            FigureCanvasAgg(fig).print_png(output)
-            data = np.asarray(output.getbuffer(), dtype=np.uint8)
-            del output
+            if record_index % update_freq == 0:
+                output = io.BytesIO()
+                FigureCanvasAgg(fig).print_png(output)
+                data = np.asarray(output.getbuffer(), dtype=np.uint8)
+                del output
+            record_index += 1
             # encoded_data = np.fromstring(base64.b64decode(data['rgb_image']), np.uint8)
             yield (b'--frame\r\n'
                    b'Content-Type: image/png\r\n\r\n' + data.tobytes() + b'\r\n')

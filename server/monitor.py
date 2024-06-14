@@ -29,5 +29,10 @@ def reskin_feed():
         mimetype = 'multipart/x-mixed-replace; boundary=frame'
     )
 
+@app.route('/reset_reskin_baseline')
+def update_baseline():
+    monitor_info.get_reskin_streamer().update_baseline()
+    return 'Baseline updated'
+
 if __name__ == '__main__':
     app.run(threaded = True)
