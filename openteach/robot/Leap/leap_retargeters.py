@@ -66,10 +66,10 @@ class LeapJointControl(LeapKinematicControl):
                 finger_joint_coords[idx],
                 finger_joint_coords[idx + 1],
                 finger_joint_coords[idx + 2]
-            )+math.pi
-            translatory_angles.append(angle * self.linear_scaling_factors[idx])
+            )
+            translatory_angles.append(angle * self.linear_scaling_factors[idx]+math.pi)
 
-        rotatory_angle = [self.calculate_finger_rotation(finger_joint_coords) * self.rotatory_scaling_factors[finger_type]] 
+        rotatory_angle = [self.calculate_finger_rotation(finger_joint_coords) * self.rotatory_scaling_factors[finger_type]+math.pi] 
         calc_finger_angles = rotatory_angle + translatory_angles
         filtered_angles = self._get_filtered_angles(finger_type, calc_finger_angles, curr_angles, moving_avg_arr)
         return filtered_angles
@@ -83,14 +83,14 @@ class LeapJointControl(LeapKinematicControl):
         # Checking if the finger tip is on the left side or the right side of the knuckle
         knuckle_vector = finger_joint_coords[1] - finger_joint_coords[0]
         tip_vector = finger_joint_coords[-1] - finger_joint_coords[0]
+
         knuckle_vector_slope = knuckle_vector[1] / knuckle_vector[0]
         tip_vector_slope = tip_vector[1] / tip_vector[0]
 
         if knuckle_vector_slope > tip_vector_slope:
-            return math.pi + angle
+            return -1 * angle
         else:
-            return math.pi - angle
-        
+            return angle
 
 
 class LeapKDLControl(LeapKinematicControl):

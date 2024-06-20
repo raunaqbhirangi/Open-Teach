@@ -20,22 +20,23 @@ class LeapHandOperator(Operator):
     def __init__(self,host,transformed_keypoints_port, finger_configs):
         self.notify_component_start('leap hand operator')
         self._host, self._port = host, transformed_keypoints_port
+        print("initlizzing")
         # Subscriber for the transformed hand keypoints
         self._transformed_hand_keypoint_subscriber = ZMQKeypointSubscriber(
-            host = self._host,
+            host = self._host.strip(),
             port = self._port,
             topic = 'transformed_hand_coords'
         )
         # Subscriber for the transformed arm frame
         self._transformed_arm_keypoint_subscriber = ZMQKeypointSubscriber(
-            host = self._host,
+            host = self._host.strip(),
             port = self._port,
             topic = 'transformed_hand_frame'
         )
         # Initializing the  finger configs
         self.finger_configs = finger_configs
         
-        #Initializing the solvers for allegro hand
+        #Initializing the solvers for leap hand
         self.fingertip_solver = LeapKDLControl()
         self.finger_joint_solver = LeapJointControl()
 
@@ -52,9 +53,9 @@ class LeapHandOperator(Operator):
         # Calibrating to get the thumb bounds
         self._calibrate_bounds()
 
-        # Getting the bounds for the allegro hand
-        allegro_bounds_path = get_path_in_package('components/operators/configs/allegro.yaml')
-        self.allegro_bounds = get_yaml_data(allegro_bounds_path)
+        # Getting the bounds for the leap hand
+        leap_bounds_path = get_path_in_package('components/operators/configs/leap.yaml')
+        self.leap_bounds = get_yaml_data(leap_bounds_path)
 
         self._timer = FrequencyTimer(VR_FREQ)
 
@@ -107,8 +108,8 @@ class LeapHandOperator(Operator):
                 return self.fingertip_solver.thumb_motion_2D(
                     hand_coordinates = thumb_keypoints, 
                     xy_hand_bounds = thumb_bounds[:4],
-                    yz_robot_bounds = self.allegro_bounds['thumb_bounds'][idx]['projective_bounds'],
-                    robot_x_val = self.allegro_bounds['x_coord'],
+                    yz_robot_bounds = self.leap_bounds['thumb_bounds'][idx]['projective_bounds'],
+                    robot_x_val = self.leap_bounds['x_coord'],
                     moving_avg_arr = self.moving_average_queues['thumb'], 
                     curr_angles = curr_angles
                 )
@@ -126,9 +127,9 @@ class LeapHandOperator(Operator):
         return self.fingertip_solver.thumb_motion_3D(
             hand_coordinates = closest_point_coords,
             xy_hand_bounds = self.hand_thumb_bounds[:4],
-            yz_robot_bounds = self.allegro_bounds['thumb_bounds'][0]['projective_bounds'], # NOTE: We assume there is only one bound now
+            yz_robot_bounds = self.leap_bounds['thumb_bounds'][0]['projective_bounds'], # NOTE: We assume there is only one bound now
             z_hand_bound = self.hand_thumb_bounds[4],
-            x_robot_bound = self.allegro_bounds['thumb_bounds'][0]['x_bounds'],
+            x_robot_bound = self.leap_bounds['thumb_bounds'][0]['x_bounds'],
             moving_avg_arr = self.moving_average_queues['thumb'], 
             curr_angles = curr_angles
         )
@@ -148,7 +149,6 @@ class LeapHandOperator(Operator):
     def _apply_retargeted_angles(self):
         hand_keypoints = self._get_finger_coords()
         desired_joint_angles = copy(self.robot.get_joint_position())
-
         # Movement for the index finger with option to freeze the finger
         if not self.finger_configs['freeze_index'] and not self.finger_configs['no_index']:
             desired_joint_angles = self.finger_joint_solver.calculate_finger_angles(
@@ -191,14 +191,18 @@ class LeapHandOperator(Operator):
             print("No ring")
             pass
 
+        
         # Movement for the thumb finger with option to freeze the finger
         if not self.finger_configs['freeze_thumb'] and not self.finger_configs['no_thumb']:
             desired_joint_angles = self.thumb_angle_calculator(hand_keypoints['thumb'][-1], desired_joint_angles) # Passing just the tip coordinates
+            print(hand_keypoints['thumb'][-1])
         elif self.finger_configs['freeze_thumb']:
             self._generate_frozen_angles(desired_joint_angles, 'thumb')
         else:
             print("No thumb")
             pass
-           
+        
         # Move the robot
+        #print("movingggggg")
+        #print(desired_joint_angles)
         self.robot.move(desired_joint_angles)

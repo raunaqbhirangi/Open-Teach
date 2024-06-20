@@ -27,6 +27,6 @@ time_steps: 1
 # Angle scaling factors
 linear_scaling_factors: [1.1, 1.1, 1.1]
 rotatory_scaling_factors: 
-  index: 0.02
-  middle: 0.02
-  ring: 0.05
+  index: 1
+  middle: 1
+  ring: 1

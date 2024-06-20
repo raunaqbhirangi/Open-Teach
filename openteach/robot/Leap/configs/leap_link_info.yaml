@@ -4,7 +4,7 @@ links_info:
   # Base link 
   base:
     name: 'Base'
-    link: 'base_link'
+    link: 'palm_lower'
 
   # Index link
   index:

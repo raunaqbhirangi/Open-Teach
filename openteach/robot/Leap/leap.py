@@ -1,10 +1,13 @@
 import numpy as np
 import math
-from openteach.robot import RobotWrapper
-from LEAP_Hand_API.python.LeapController import LeapNode
+import sys
+import os
+sys.path.append(os.path.abspath('/home/kovaak/leap_hand_teleoperator/LEAP_Hand_API/python'))
+from LeapController import LeapNode
+
 from openteach.robot.robot import RobotWrapper
-PORT = 'usbserial-FT7WBF78'
-BAUDRATE = 3000000
+PORT = 'ttyUSB0'
+BAUDRATE = 4000000
 class LeapHand(RobotWrapper):
     #Python API controller
     def __init__(self):
@@ -44,5 +47,11 @@ class LeapHand(RobotWrapper):
     
     def home(self):
         self._controller.home()
+
+    def move_coords(self, input_coords):
+        pass
+
+    def get_cartesian_position(self):
+        pass
 
     

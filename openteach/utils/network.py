@@ -10,40 +10,40 @@ import threading
 def create_push_socket(host, port):
     context = zmq.Context()
     socket = context.socket(zmq.PUSH)
-    socket.bind('tcp://{}:{}'.format(host, port))
+    socket.bind('tcp://{}:{}'.format(host.strip(), port))
     return socket
 
 def create_pull_socket(host, port):
     context = zmq.Context()
     socket = context.socket(zmq.PULL)
     socket.setsockopt(zmq.CONFLATE, 1)
-    socket.bind('tcp://{}:{}'.format(host, port))
+    socket.bind('tcp://{}:{}'.format(host.strip(), port))
     return socket
 
 def create_response_socket(host, port):
     content = zmq.Context()
     socket = content.socket(zmq.REP)
-    socket.bind('tcp://{}:{}'.format(host, port))
+    socket.bind('tcp://{}:{}'.format(host.strip(), port))
     return socket
 
 def create_request_socket(host, port):
     context = zmq.Context()
     socket = context.socket(zmq.REQ)
-    socket.connect('tcp://{}:{}'.format(host, port))
+    socket.connect('tcp://{}:{}'.format(host.strip(), port))
     return socket
 
 def create_subscriber_socket(host, port, topic):
     context = zmq.Context()
     socket = context.socket(zmq.SUB)
     # socket.setsockopt(zmq.CONFLATE, 1)
-    socket.connect('tcp://{}:{}'.format(host, port))
+    socket.connect('tcp://{}:{}'.format(host.strip(), port))
     socket.subscribe(topic)
     return socket
 
 # Pub/Sub classes for Keypoints
 class ZMQKeypointPublisher(object):
     def __init__(self, host, port):
-        self._host, self._port = host, port
+        self._host, self._port = host.strip(), port
         self._init_publisher()
 
     def _init_publisher(self):
@@ -65,7 +65,7 @@ class ZMQKeypointPublisher(object):
 
 class ZMQKeypointSubscriber(threading.Thread):
     def __init__(self, host, port, topic):
-        self._host, self._port, self._topic = host, port, topic
+        self._host, self._port, self._topic = host.strip(), port, topic
         self._init_subscriber()
 
         # Topic chars to remove
@@ -99,7 +99,7 @@ class ZMQKeypointSubscriber(threading.Thread):
 # Pub/Sub classes for storing data from Realsense Cameras
 class ZMQCameraPublisher(object):
     def __init__(self, host, port):
-        self._host, self._port = host, port
+        self._host, self._port = host.strip(), port
         self._init_publisher()
 
     def _init_publisher(self):
@@ -135,7 +135,7 @@ class ZMQCameraPublisher(object):
 
 class ZMQCameraSubscriber(threading.Thread):
     def __init__(self, host, port, topic_type):
-        self._host, self._port, self._topic_type = host, port, topic_type
+        self._host, self._port, self._topic_type = host.strip(), port, topic_type
         self._init_subscriber()
 
     def _init_subscriber(self):
@@ -179,7 +179,7 @@ class ZMQCameraSubscriber(threading.Thread):
 # Publisher for image visualizers
 class ZMQCompressedImageTransmitter(object):
     def __init__(self, host, port):
-        self._host, self._port = host, port
+        self._host, self._port = host.strip(), port
         # self._init_push_socket()
         self._init_publisher()
 
@@ -204,7 +204,7 @@ class ZMQCompressedImageTransmitter(object):
 
 class ZMQCompressedImageReciever(threading.Thread):
     def __init__(self, host, port):
-        self._host, self._port = host, port
+        self._host, self._port = host.strip(), port
         # self._init_pull_socket()
         self._init_subscriber()
 
@@ -234,7 +234,7 @@ class ZMQCompressedImageReciever(threading.Thread):
 
 class ZMQButtonFeedbackSubscriber(threading.Thread):
     def __init__(self, host, port):
-        self._host, self._port = host, port
+        self._host, self._port = host.strip(), port
         # self._init_pull_socket()
         self._init_subscriber()
 
