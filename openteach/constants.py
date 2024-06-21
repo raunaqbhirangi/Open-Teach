@@ -111,7 +111,7 @@ SAMPLE_WRITER_FPS = 5
 
 # Deployment
 DEPLOY_REACH_THRESHOLD = 0.35
-DEPLOY_FREQ = 250
+DEPLOY_FREQ = 100
 POLICY_FREQ = 10
 
 #RESOLUTION SPECIFIC parameters
@@ -128,36 +128,31 @@ ARM_TELEOP_STOP = 0
 
 SCALE_FACTOR= 1000
 
-RIGHT_ARM_IP = "192.168.1.211" # For Right XArm
+RIGHT_ARM_IP = "192.168.86.230" # For Right XArm
 LEFT_ARM_IP = "192.168.86.216" # For Left XArm
 
-BIMANUAL_LEFT_HOME = [206,0,475,3.142,0,0]
-BIMANUAL_RIGHT_HOME = [206,0,275,3.142,0,0] 
+BIMANUAL_LEFT_HOME = [206, 0, 475, 3.142, 0, 0]
+BIMANUAL_RIGHT_HOME = [206, 0, 475, 3.142, 0, 0]
 
 ROBOT_HOME_POSE_AA = [206.0, -0.0, 475, 3.142, 0.0, 0.0]
-ROBOT_HOME_JS = [0.072358, -0.95536, -0.040176,
-                 0.661511, -0.032836, 1.616466, 0.047656]
+ROBOT_HOME_JS = [0.072358, -0.95536, -0.040176, 0.661511, -0.032836, 1.616466, 0.047656]
 
-H_R_V = np.array( # this is for vention table 230 arm
-    [[0, 1, 0, 0],
-     [0, 0, 1, 0],
-     [1, 0, 0, 0],
-     [0, 0, 0, 1]]
-)
-H_R_V_star = np.array( # this is for vention table 230 arm
-[[0,1,0,0],
- [0,0,1,0],
- [-1,0,0,0],
- [0,0,0,1]]
-)
-
-x_min, x_max = 206, 550
-y_min, y_max = -365, 260
-z_min, z_max = 0, 550    #232, 550
-ROBOT_WORKSPACE = np.array([[x_min, y_min, z_min], [x_max, y_max, z_max]])
-ROBOT_SERVO_MODE_STEP_LIMITS = np.array([-2, 2])
-
-# Oculus stick
-VR_TCP_HOST = "10.19.152.142"
+############################# Stick Teleop #########################################
+# VR_TCP_ADDRESS = "tcp://10.19.205.42:5555"
+VR_TCP_HOST = "10.19.184.115"
 VR_TCP_PORT = 5555
 VR_CONTROLLER_TOPIC = b"oculus_controller"
+
+H_R_V = np.array(  # this is for vention table 230 arm
+    [[1, 0, 0, 0], [0, 0, -1, 0], [0, -1, 0, 0], [0, 0, 0, 1]]
+)
+H_R_V_star = np.array(  # this is for vention table 230 arm
+    [[1, 0, 0, 0], [0, 0, 1, 0], [0, 1, 0, 0], [0, 0, 0, 1]]
+)
+
+# Robot workspace position limits.
+x_min, x_max = 90, 550 #206, 550
+y_min, y_max = -365, 335
+z_min, z_max = 100, 690#590 #550  # 232, 550
+ROBOT_WORKSPACE = np.array([[x_min, y_min, z_min], [x_max, y_max, z_max]])
+ROBOT_SERVO_MODE_STEP_LIMITS = np.array([-2, 2])

@@ -2,14 +2,14 @@ defaults:
   - _self_
   - camera
   - network
-  - robot: xarm_stick
+  - robot: xarm_stick_reskin
   - override hydra/hydra_logging: disabled  
   - override hydra/job_logging: disabled 
 
-storage_path: extracted_data/xarm_test
+storage_path: /home/raunaq/Open-Teach/extracted_data/0621_yifeng
 demo_num: 0
 sim_env: false
-use_sensor: false
+use_sensor: true
 host: ${host_address}
 
 
