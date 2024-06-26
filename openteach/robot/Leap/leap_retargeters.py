@@ -6,6 +6,9 @@ from openteach.utils.network import ZMQKeypointPublisher, ZMQKeypointSubscriber
 from openteach.utils.files import *
 from openteach.utils.vectorops import *
 import math
+from openteach.utils.vectorops import coord_in_bound
+
+MIDDLE_ROTATE_DEGREE = 10
 
 class LeapKinematicControl(ABC):
     def __init__(self, bounded_angles = True):
@@ -69,12 +72,12 @@ class LeapJointControl(LeapKinematicControl):
             )
             translatory_angles.append(angle * self.linear_scaling_factors[idx]+math.pi)
 
-        rotatory_angle = [self.calculate_finger_rotation(finger_joint_coords) * self.rotatory_scaling_factors[finger_type]+math.pi] 
+        rotatory_angle = [self.calculate_finger_rotation(finger_joint_coords,finger_type) * self.rotatory_scaling_factors[finger_type]+math.pi] 
         calc_finger_angles = rotatory_angle + translatory_angles
         filtered_angles = self._get_filtered_angles(finger_type, calc_finger_angles, curr_angles, moving_avg_arr)
         return filtered_angles
 
-    def calculate_finger_rotation(self, finger_joint_coords):
+    def calculate_finger_rotation(self, finger_joint_coords,finger_type):
         straight_line = np.array([0,1])
         vector_tip_to_knucle = finger_joint_coords[-1] - finger_joint_coords[1]
         vector_tip_to_knucle = vector_tip_to_knucle[:2]
@@ -84,12 +87,20 @@ class LeapJointControl(LeapKinematicControl):
         knuckle_vector = finger_joint_coords[1] - finger_joint_coords[0]
         tip_vector = finger_joint_coords[-1] - finger_joint_coords[0]
 
+        
         knuckle_vector_slope = knuckle_vector[1] / knuckle_vector[0]
         tip_vector_slope = tip_vector[1] / tip_vector[0]
 
         if knuckle_vector_slope > tip_vector_slope:
-            return -1 * angle
-        else:
+            angle =  -1 * angle
+        
+        if finger_type == 'ring':
+            return angle if angle>0 else 0
+        elif finger_type == 'index':
+            return angle if angle<0 else 0
+        elif finger_type == 'middle':
+            return np.clip(angle,-MIDDLE_ROTATE_DEGREE*math.pi/180,MIDDLE_ROTATE_DEGREE*math.pi/180)
+        else: 
             return angle
 
 
@@ -109,7 +120,6 @@ class LeapKDLControl(LeapKinematicControl):
         avg_finger_coords = moving_average(transformed_coords, moving_avg_arr, self.time_steps)    
         calc_finger_angles = self.solver.finger_inverse_kinematics(finger_type, avg_finger_coords, curr_finger_angles)
         
-
         desired_angles = np.array(copy(curr_angles))
 
         # Applying angular bounds
@@ -253,19 +263,20 @@ class LeapKDLControl(LeapKinematicControl):
         z_hand_bound, 
         x_robot_bound, 
         moving_avg_arr, 
-        curr_angles
+        curr_angles,
+        last_joint_angle
     ):
         '''
         For 3D control in all directions - human bounds are mapped to robot bounds with varied depth
         '''
-        y_robot_coord, z_robot_coord = persperctive_transform(
+        y_robot_coord, x_robot_coord = persperctive_transform(
             (hand_coordinates[0], hand_coordinates[1]), 
             xy_hand_bounds, 
             yz_robot_bounds
         )
-
-        x_robot_coord = linear_transform(hand_coordinates[2], z_hand_bound, x_robot_bound)
+             
+        z_robot_coord = linear_transform(hand_coordinates[2], z_hand_bound, x_robot_bound)
         transformed_coords = [x_robot_coord, y_robot_coord, z_robot_coord]
         desired_angles = self.calculate_desired_angles('thumb', transformed_coords, moving_avg_arr, curr_angles)
-
+        desired_angles[-1]=last_joint_angle
         return desired_angles

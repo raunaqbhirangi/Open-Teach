@@ -1,15 +1,15 @@
 from copy import deepcopy as copy
 from openteach.utils.network import ZMQKeypointSubscriber, ZMQKeypointPublisher
 from .operator import Operator
-
+import math
 
 from shapely.geometry import Point, Polygon 
 from shapely.ops import nearest_points
-from .calibrators.allegro import OculusThumbBoundCalibrator
+from .calibrators.leap import OculusThumbBoundCalibrator
 from openteach.robot.Leap.leap import LeapHand
 from openteach.robot.Leap.leap_retargeters import LeapKDLControl, LeapJointControl
 from openteach.utils.files import *
-from openteach.utils.vectorops import coord_in_bound
+from openteach.utils.vectorops import *
 from openteach.utils.timer import FrequencyTimer
 from openteach.constants import *
 
@@ -20,7 +20,6 @@ class LeapHandOperator(Operator):
     def __init__(self,host,transformed_keypoints_port, finger_configs):
         self.notify_component_start('leap hand operator')
         self._host, self._port = host, transformed_keypoints_port
-        print("initlizzing")
         # Subscriber for the transformed hand keypoints
         self._transformed_hand_keypoint_subscriber = ZMQKeypointSubscriber(
             host = self._host.strip(),
@@ -119,11 +118,17 @@ class LeapHandOperator(Operator):
     # Get robot thumb angles when moving in 3D motion
     def _get_3d_thumb_angles(self, thumb_keypoints, curr_angles):
         # We will be using polygon implementations of shapely library to test this
-        planar_point = Point(thumb_keypoints)
+        planar_point = Point(thumb_keypoints[-1])
         planar_thumb_bounds = Polygon(self.hand_thumb_bounds[:4])
         # Get the closest point from the thumb to the point within the bounds
         closest_point = nearest_points(planar_thumb_bounds, planar_point)[0]
-        closest_point_coords = [closest_point.x, closest_point.y, thumb_keypoints[2]]
+        closest_point_coords = [closest_point.x, closest_point.y, thumb_keypoints[-1][2]]
+        last_joint= calculate_angle(
+                thumb_keypoints[-3][:2],
+                thumb_keypoints[-2][:2],
+                thumb_keypoints[-1][:2]
+            )+math.pi
+        
         return self.fingertip_solver.thumb_motion_3D(
             hand_coordinates = closest_point_coords,
             xy_hand_bounds = self.hand_thumb_bounds[:4],
@@ -131,7 +136,8 @@ class LeapHandOperator(Operator):
             z_hand_bound = self.hand_thumb_bounds[4],
             x_robot_bound = self.leap_bounds['thumb_bounds'][0]['x_bounds'],
             moving_avg_arr = self.moving_average_queues['thumb'], 
-            curr_angles = curr_angles
+            curr_angles = curr_angles,
+            last_joint_angle = last_joint
         )
     
 
@@ -194,15 +200,12 @@ class LeapHandOperator(Operator):
         
         # Movement for the thumb finger with option to freeze the finger
         if not self.finger_configs['freeze_thumb'] and not self.finger_configs['no_thumb']:
-            desired_joint_angles = self.thumb_angle_calculator(hand_keypoints['thumb'][-1], desired_joint_angles) # Passing just the tip coordinates
-            print(hand_keypoints['thumb'][-1])
+            desired_joint_angles = self.thumb_angle_calculator(hand_keypoints['thumb'], desired_joint_angles) # Passing just the tip coordinates
         elif self.finger_configs['freeze_thumb']:
             self._generate_frozen_angles(desired_joint_angles, 'thumb')
         else:
             print("No thumb")
             pass
         
-        # Move the robot
-        #print("movingggggg")
-        #print(desired_joint_angles)
+        # Move the robot 
         self.robot.move(desired_joint_angles)

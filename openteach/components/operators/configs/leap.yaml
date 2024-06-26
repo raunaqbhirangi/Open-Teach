@@ -49,17 +49,17 @@ thumb_bounds:
   #       - -0.024
   #       - -0.0087
   - # middle_ring
-    x_bounds: [0.054, 0.117] # Here we're getting the smallest limits
+    x_bounds: [-0.1430161,-0.054271] # Here we're getting the smallest limits
     projective_bounds:
       - # Top right
-        - 0.1154
-        - -0.0051
+        - 0.0634886
+        - -0.0067124
       - # Bottom right
-        - 0.1321
-        - -0.0481
+        - 0.1198782
+        - -0.0824112
       - # ring_bottom
-        - -0.0373
-        - -0.0961
+        - -0.1071189
+        - -0.0692177
       - # ring_top
-        - -0.024
-        - -0.0087
+        - -0.0718135
+        - -0.0113067

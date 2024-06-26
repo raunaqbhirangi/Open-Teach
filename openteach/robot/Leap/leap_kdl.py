@@ -2,7 +2,7 @@ from ikpy import chain
 import numpy as np
 from copy import deepcopy as copy
 from openteach.utils.files import *
-
+import math
 class LeapKDL(object):
     def __init__(self):
         # Getting the URDF path
@@ -76,10 +76,18 @@ class LeapKDL(object):
             seed = list(seed)
             seed.insert(0, 0)
             seed.append(0)
-
-        output_angles = self.chains[finger_type].inverse_kinematics(input_position, initial_position = seed)
+        output_angles = self.chains[finger_type].inverse_kinematics(input_position)
+        output_angles = self.allegro_to_leap(output_angles)
+        print("Input Position ",input_position)
+        print("Output ",output_angles)
         return output_angles[1:5]
 
+    def allegro_to_leap(self,input_angles):
+        output =[]
+        for i in range(len(input_angles)):
+            output.append(input_angles[i]+math.pi)
+        return output
+    
     def get_fingertip_coords(self, joint_positions):
         index_coords = self.finger_forward_kinematics('index', joint_positions[:4])[0]
         middle_coords = self.finger_forward_kinematics('middle', joint_positions[4:8])[0]
