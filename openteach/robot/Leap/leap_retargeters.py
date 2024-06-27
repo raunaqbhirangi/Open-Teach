@@ -84,22 +84,21 @@ class LeapJointControl(LeapKinematicControl):
         angle = calculate_angle_between_vectors(straight_line,vector_tip_to_knucle)
         
         # Checking if the finger tip is on the left side or the right side of the knuckle
-        knuckle_vector = finger_joint_coords[1] - finger_joint_coords[0]
-        tip_vector = finger_joint_coords[-1] - finger_joint_coords[0]
+        #knuckle_vector = finger_joint_coords[1] - finger_joint_coords[0]
+        #tip_vector = finger_joint_coords[-1] - finger_joint_coords[0]
 
         
-        knuckle_vector_slope = knuckle_vector[1] / knuckle_vector[0]
-        tip_vector_slope = tip_vector[1] / tip_vector[0]
-
-        if knuckle_vector_slope > tip_vector_slope:
+        #knuckle_vector_slope = knuckle_vector[1] / knuckle_vector[0]
+        #tip_vector_slope = tip_vector[1] / tip_vector[0]
+        #print(finger_type,vector_tip_to_knucle[0])
+        if vector_tip_to_knucle[0]>0:
             angle =  -1 * angle
-        
         if finger_type == 'ring':
             return angle if angle>0 else 0
         elif finger_type == 'index':
             return angle if angle<0 else 0
         elif finger_type == 'middle':
-            return np.clip(angle,-MIDDLE_ROTATE_DEGREE*math.pi/180,MIDDLE_ROTATE_DEGREE*math.pi/180)
+            return max(-MIDDLE_ROTATE_DEGREE*math.pi/180, min(angle, MIDDLE_ROTATE_DEGREE*math.pi/180))
         else: 
             return angle
 

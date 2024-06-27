@@ -163,6 +163,7 @@ class LeapHandOperator(Operator):
                 curr_angles = desired_joint_angles,
                 moving_avg_arr = self.moving_average_queues['index']
             )
+            #print((desired_joint_angles[0]-math.pi)*180/math.pi)
         elif self.finger_configs['freeze_index']:
             self._generate_frozen_angles(desired_joint_angles, 'index')
         else:

@@ -78,8 +78,8 @@ class LeapKDL(object):
             seed.append(0)
         output_angles = self.chains[finger_type].inverse_kinematics(input_position)
         output_angles = self.allegro_to_leap(output_angles)
-        print("Input Position ",input_position)
-        print("Output ",output_angles)
+        #print("Input Position ",input_position)
+        #print("Output ",output_angles)
         return output_angles[1:5]
 
     def allegro_to_leap(self,input_angles):
