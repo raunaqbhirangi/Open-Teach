@@ -55,7 +55,8 @@ class LeapHandOperator(Operator):
         # Getting the bounds for the leap hand
         leap_bounds_path = get_path_in_package('components/operators/configs/leap.yaml')
         self.leap_bounds = get_yaml_data(leap_bounds_path)
-
+        self.bound_info = get_yaml_data(get_path_in_package("robot/Leap/configs/leap_bounds.yaml"))
+        self.rotatory_scaling_factors = self.bound_info['rotatory_scaling_factors']
         self._timer = FrequencyTimer(VR_FREQ)
 
         # Using 3 dimensional thumb motion or two dimensional thumb motion
@@ -127,7 +128,7 @@ class LeapHandOperator(Operator):
                 thumb_keypoints[-3][:2],
                 thumb_keypoints[-2][:2],
                 thumb_keypoints[-1][:2]
-            )+math.pi
+            )* self.rotatory_scaling_factors["thumb"]+math.pi
         
         return self.fingertip_solver.thumb_motion_3D(
             hand_coordinates = closest_point_coords,

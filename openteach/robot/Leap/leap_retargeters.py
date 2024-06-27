@@ -65,7 +65,7 @@ class LeapJointControl(LeapKinematicControl):
     def calculate_finger_angles(self, finger_type, finger_joint_coords, curr_angles, moving_avg_arr):
         translatory_angles = []
         for idx in range(self.hand_configs['joints_per_finger'] - 1): # Ignoring the rotatory joint
-            angle = calculate_angle(
+            angle = calculate_angle_yz_plane(
                 finger_joint_coords[idx],
                 finger_joint_coords[idx + 1],
                 finger_joint_coords[idx + 2]

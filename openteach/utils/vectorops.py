@@ -51,5 +51,15 @@ def calculate_angle(coord_1, coord_2, coord_3):
     angle = np.arccos(inner_product / norm)
     return angle
 
+def calculate_angle_yz_plane(coord_1, coord_2, coord_3):
+    vector_1 = coord_2 - coord_1
+    vector_2 = coord_3 - coord_2
+    vector_1 =vector_1[1:]
+    vector_2 =vector_2[1:]
+    inner_product = np.inner(vector_1, vector_2)
+    norm = np.linalg.norm(vector_1) * np.linalg.norm(vector_2)
+    angle = np.arccos(inner_product / norm)
+    return angle
+
 def coord_in_bound(bound, coord):
     return cv2.pointPolygonTest(np.float32(bound), np.float32(coord), False)
