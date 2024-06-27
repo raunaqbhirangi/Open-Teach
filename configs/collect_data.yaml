@@ -6,10 +6,11 @@ defaults:
   - override hydra/hydra_logging: disabled  
   - override hydra/job_logging: disabled 
 
-storage_path: /home/raunaq/Open-Teach/extracted_data/0621_yifeng
+storage_path: /mnt/robotlab/raunaq/data/crossmodal/venky/0627_cardswipe
 demo_num: 0
 sim_env: false
 use_sensor: true
+is_xela: false
 host: ${host_address}
 
 

@@ -4,12 +4,11 @@ defaults:
   - override hydra/hydra_logging: disabled  
   - override hydra/job_logging: disabled 
 
-camera_address: '10.19.216.156'
 robot_cam_serial_numbers:
-  1: '239122072217'
-  2: '023322062082'
-  3: '233522071078'
-  4: '141722076049'
+  - 1: '239122072217'
+  - 2: '023322062082'
+  - 3: '233522071078'
+  - 4: '141722076049'
   
 cam_configs:
   width: 640 

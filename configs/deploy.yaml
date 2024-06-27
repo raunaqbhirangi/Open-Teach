@@ -7,7 +7,7 @@ defaults:
   - override hydra/job_logging: disabled  
 
  
-use_sensor: false
+use_sensor: true
 
 hydra:  
   output_subdir: null  
