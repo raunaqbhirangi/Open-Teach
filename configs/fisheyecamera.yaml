@@ -6,8 +6,8 @@ defaults:
 
 # Start fisheye cam indices from 51
 fisheye_cam_numbers:
-  - 51: 12 # top
-  - 52: 26 #fisheye
+  - 51: 12 # was 10 & 14 before, top fisheye
+  - 52: 26 # was 27 before, seems to change randomly
   
 cam_configs:
   width: 640
@@ -15,7 +15,7 @@ cam_configs:
   fps: 30
   
 
-oculus_cam: 0 # First camera
+oculus_cam: 0
 stream_oculus: False
 
 hydra:  
