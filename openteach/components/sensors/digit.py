@@ -31,7 +31,7 @@ class DigitSensorPublisher(Component):
                 rgb_image = self.digit.get_frame()
                 # rgb_image = rotate_image(rgb_image, 180)
                 # rgb_image = rescale_image(rgb_image, 0.5)
-                self.rgb_publisher.pub_rgb_image(rgb_image, time.time())
+                self.rgb_publisher.pub_rgb_image(rgb_image, time.time() * 1000.)
                 self.timer.end_loop()
 
             except KeyboardInterrupt:
