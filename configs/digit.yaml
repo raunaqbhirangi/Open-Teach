@@ -1,0 +1,17 @@
+defaults:
+  - _self_
+  - network
+  - override hydra/hydra_logging: disabled  
+  - override hydra/job_logging: disabled 
+
+stream_configs:
+  host: ${sensor_host_address}
+  port: ${digit_publisher_port}
+
+digit_config:
+  serial_num: D20875
+
+hydra:  
+  output_subdir: null  
+  run:  
+    dir: .

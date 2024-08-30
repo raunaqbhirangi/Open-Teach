@@ -3,6 +3,7 @@ import hydra
 from abc import ABC
 
 from openteach.components.sensors.reskin import ReskinSensorPublisher
+from openteach.components.sensors.digit import DigitSensorPublisher
 from .recorders.image import RGBImageRecorder, DepthImageRecorder, FishEyeImageRecorder
 from .recorders.robot_state import RobotInformationRecord
 from .recorders.sim_state import SimInformationRecord
@@ -105,6 +106,23 @@ class ReskinSensors(ProcessInstantiator):
         component.stream()
     
     def _init_reskin_processes(self):
+        self.processes.append(Process(
+            target = self._start_component,
+        ))
+
+class DigitSensors(ProcessInstantiator):
+    def __init__(self, configs):
+        super().__init__(configs)
+        self._init_digit_processes()
+    
+    def _start_component(self):
+        component = DigitSensorPublisher(
+            stream_configs = self.configs.stream_configs,
+            serial_num = self.configs.digit_config.serial_num
+        )
+        component.stream()
+    
+    def _init_digit_processes(self):
         self.processes.append(Process(
             target = self._start_component,
         ))
@@ -330,6 +348,14 @@ class Collector(ProcessInstantiator):
             component = ReskinSensorZMQRecorder(
                 controller_configs=controller_config,
                 storage_path=self._storage_path
+            )
+        elif "Digit" in controller_config["_target_"]:
+            component = RGBImageRecorder(
+                host = self.configs.host_address,
+                image_stream_port = controller_config["stream_configs"]["port"],
+                storage_path = self._storage_path,
+                filename = 'digit_rgb_video',
+                image_res = DIGIT_IMAGE_RES
             )
         else:
             raise NotImplementedError

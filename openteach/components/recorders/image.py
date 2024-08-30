@@ -17,7 +17,8 @@ class RGBImageRecorder(Recorder):
         image_stream_port,
         storage_path,
         filename,
-        sim=False
+        sim=False,
+        image_res=IMAGE_RECORD_RESOLUTION,
     ):
         self.notify_component_start('RGB stream: {}'.format(image_stream_port))
         
@@ -41,6 +42,7 @@ class RGBImageRecorder(Recorder):
         self._metadata_filename = os.path.join(storage_path, filename + '.metadata')
 
         # Initializing the recorder
+        # TODO: Sim does not use argument right now
         if self.sim==True:
             self.recorder = cv2.VideoWriter(
                 self._recorder_file_name, 
@@ -53,7 +55,7 @@ class RGBImageRecorder(Recorder):
                 self._recorder_file_name, 
                 cv2.VideoWriter_fourcc(*'XVID'), 
                 CAM_FPS, 
-                IMAGE_RECORD_RESOLUTION
+                image_res
             )
         self.timestamps = []
 
