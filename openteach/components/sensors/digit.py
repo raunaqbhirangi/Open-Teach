@@ -20,6 +20,7 @@ class DigitSensorPublisher(Component):
         # TODO: Set DIGIT FPS if required
         self.digit = Digit(serial_num)
         self.digit.connect()
+        print("Successfully connected to Digit sensor")
     
     def stream(self):
         self.notify_component_start('digit')
