@@ -1,3 +1,4 @@
+import time
 import numpy as np
 from digit_interface import Digit
 from openteach.components import Component
@@ -29,7 +30,7 @@ class DigitSensorPublisher(Component):
                 rgb_image = self.digit.get_frame()
                 # rgb_image = rotate_image(rgb_image, 180)
                 # rgb_image = rescale_image(rgb_image, 0.5)
-                self.rgb_publisher.pub_image(rgb_image, topic_name='digit')
+                self.rgb_publisher.pub_rgb_image(rgb_image, time.time())
                 self.timer.end_loop()
 
             except KeyboardInterrupt:
