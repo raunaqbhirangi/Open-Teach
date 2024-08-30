@@ -58,6 +58,9 @@ XELA_NUM_TAXELS = 16
 RESKIN_FPS = 100
 RESKIN_NUM_SENSORS = 10
 
+# Digit Sensor parameters
+DIGIT_FPS = 30
+
 # Robot parameters
 
 # Allegro
