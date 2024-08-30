@@ -68,6 +68,7 @@ class RGBImageRecorder(Recorder):
             try:
                 self.timer.start_loop()
                 image, timestamp = self.image_subscriber.recv_rgb_image()
+                print(image.shape)
                 self.recorder.write(image)
                 self.timestamps.append(timestamp)
                 self.num_image_frames += 1

@@ -220,7 +220,7 @@ class Collector(ProcessInstantiator):
         )
        
         self._create_storage_dir()
-        self._init_camera_recorders()
+        # self._init_camera_recorders()
         # Initializing the recorders
         if self.configs.sim_env is True:
             self._init_sim_recorders()
