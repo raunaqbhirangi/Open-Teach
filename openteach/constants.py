@@ -60,6 +60,7 @@ RESKIN_NUM_SENSORS = 10
 
 # Digit Sensor parameters
 DIGIT_FPS = 30
+DIGIT_IMAGE_RES = (240, 320)
 
 # Robot parameters
 

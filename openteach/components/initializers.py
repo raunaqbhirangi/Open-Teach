@@ -354,7 +354,8 @@ class Collector(ProcessInstantiator):
                 host = self.configs.host_address,
                 image_stream_port = controller_config["stream_configs"]["port"],
                 storage_path = self._storage_path,
-                filename = 'digit_rgb_video'
+                filename = 'digit_rgb_video',
+                image_res = DIGIT_IMAGE_RES
             )
         else:
             raise NotImplementedError
