@@ -1,5 +1,6 @@
 robot_name: leap_hand
-
+leap_port: 'ttyUSB0'
+leap_baudrate: 4000000
 # Detection from the oculus
 detector:
   _target_: openteach.components.detector.oculus.OculusVRHandDetector
