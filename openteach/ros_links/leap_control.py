@@ -66,8 +66,8 @@ class DexArmControl():
 
         joint_state = dict(
             position = np.array(raw_joint_state.position, dtype = np.float32),
-            #velocity = np.array(raw_joint_state.velocity, dtype = np.float32),
-            #effort = np.array(raw_joint_state.effort, dtype = np.float32),
+            velocity = np.array(raw_joint_state.velocity, dtype = np.float32),
+            effort = np.array(raw_joint_state.effort, dtype = np.float32),
             timestamp = raw_joint_state.header.stamp.secs + (raw_joint_state.header.stamp.nsecs * 1e-9)
         )
         return joint_state
