@@ -13,9 +13,6 @@ from openteach.utils.vectorops import *
 from openteach.utils.timer import FrequencyTimer
 from openteach.constants import *
 
-
-
-
 class LeapHandOperator(Operator):
     def __init__(self,host,transformed_keypoints_port, finger_configs):
         self.notify_component_start('leap hand operator')

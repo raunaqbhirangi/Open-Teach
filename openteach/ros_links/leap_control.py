@@ -6,8 +6,8 @@ import os
 from sensor_msgs.msg import JointState
 from geometry_msgs.msg import PoseStamped
 from copy import deepcopy as copy
-sys.path.append(os.path.abspath('/home/kovaak/LEAP_Hand_API'))
-from ros_module.LeapController import LeapController
+sys.path.append(os.path.abspath('/home/kovak/LEAP_Hand_API/ros_module'))
+from LeapController import LeapController
 
 LEAP_COMMANDED_JOINT_STATE_TOPIC = '/leaphand_node/cmd_leap'
 LEAP_JOINT_STATE_TOPIC = '/leaphand_node/joint_states'
@@ -58,7 +58,7 @@ class DexArmControl():
         self.leap_commanded_joint_state = joint_state
 
     # State information functions
-    def get_hand_state(self):
+    def get_joint_state(self):
         if self.leap_joint_state is None:
             return None
 
@@ -68,11 +68,11 @@ class DexArmControl():
             position = np.array(raw_joint_state.position, dtype = np.float32),
             #velocity = np.array(raw_joint_state.velocity, dtype = np.float32),
             #effort = np.array(raw_joint_state.effort, dtype = np.float32),
-            #timestamp = raw_joint_state.header.stamp.secs + (raw_joint_state.header.stamp.nsecs * 1e-9)
+            timestamp = raw_joint_state.header.stamp.secs + (raw_joint_state.header.stamp.nsecs * 1e-9)
         )
         return joint_state
 
-    def get_commanded_hand_state(self):
+    def get_commanded_joint_state(self):
         if self.leap_commanded_joint_state is None:
             return None
 
@@ -82,7 +82,7 @@ class DexArmControl():
             position = np.array(raw_joint_state.position, dtype = np.float32),
             #velocity = np.array(raw_joint_state.velocity, dtype = np.float32),
             #effort = np.array(raw_joint_state.effort, dtype = np.float32),
-            #timestamp = raw_joint_state.header.stamp.secs + (raw_joint_state.header.stamp.nsecs * 1e-9)
+            timestamp = raw_joint_state.header.stamp.secs + (raw_joint_state.header.stamp.nsecs * 1e-9)
         )
         return joint_state
         
