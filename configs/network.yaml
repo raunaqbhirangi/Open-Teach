@@ -48,3 +48,5 @@ digit_publisher_port: 13005
 
 reskin_port: /dev/ttyACM0
 reskin_num_mags: 10
+flesh_port: /dev/ttyACM1
+flesh_num_mags: 5

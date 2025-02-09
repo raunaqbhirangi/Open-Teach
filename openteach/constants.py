@@ -143,7 +143,7 @@ ROBOT_HOME_JS = [0.072358, -0.95536, -0.040176, 0.661511, -0.032836, 1.616466, 0
 
 ############################# Stick Teleop #########################################
 # VR_TCP_ADDRESS = "tcp://10.19.205.42:5555"
-VR_TCP_HOST = "10.19.184.115"
+VR_TCP_HOST = "10.19.130.238"
 VR_TCP_PORT = 5555
 VR_CONTROLLER_TOPIC = b"oculus_controller"
 

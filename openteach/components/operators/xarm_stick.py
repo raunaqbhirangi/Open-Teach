@@ -230,7 +230,7 @@ class XArmOperator(Operator):
         elif self.controller_state.right_hand_trigger > 0.5:
             gripper_state = GRIPPER_OPEN
         if gripper_state is not None and gripper_state != self.gripper_correct_state:
-            self.robot.set_gripper_state(gripper_state * 800)
+            # self.robot.set_gripper_state(gripper_state * 800)
             self.gripper_correct_state = gripper_state
             
         if self.start_teleop:

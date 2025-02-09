@@ -14,10 +14,10 @@ class Bimanual(RobotWrapper):
         return {
             'joint_states': self.get_joint_state_from_socket,
             'cartesian_states': self.get_cartesian_state_from_socket,
-            'gripper_states': self.get_gripper_state_from_socket,
+            # 'gripper_states': self.get_gripper_state_from_socket,
             'actual_cartesian_states': self.get_robot_actual_cartesian_position,
             'actual_joint_states': self.get_robot_actual_joint_position,
-            'actual_gripper_states': self.get_gripper_state,
+            # 'actual_gripper_states': self.get_gripper_state,
             'commanded_cartesian_state': self.get_cartesian_commanded_position
         }
 

@@ -19,7 +19,7 @@ class Robot(XArmAPI):
     def __init__(self, ip="192.168.86.230", is_radian=True, gripper_start_state=800.0):
         super(Robot, self).__init__(
             port=ip, is_radian=is_radian, is_tool_coord=False)
-        self.set_gripper_enable(True)
+        self.set_gripper_enable(False)
         self.ip = ip
         self.gripper_start_state = gripper_start_state
 
@@ -33,21 +33,25 @@ class Robot(XArmAPI):
     def set_mode_and_state(self, mode: RobotControlMode, state: int = 0):
         self.set_mode(mode.value)
         self.set_state(state)
-        self.set_gripper_mode(0)  # Gripper is always in position control.
+        # self.set_gripper_mode(0)  # Gripper is always in position control.
 
     def reset(self):
-        # Clean error
         self.clear()
-        print("SLow reset working")
+        print("Slow reset working")
         self.set_mode_and_state(RobotControlMode.CARTESIAN_CONTROL, 0)
+        
+        self.motion_enable(enable=True)  # Ensure motion is enabled
+        self.set_state(0)  # Ensure it's ready
+        time.sleep(0.1)  # Small delay before motion
+        
         status = self.set_servo_angle(angle=ROBOT_HOME_JS, wait=True, is_radian=True, speed=math.radians(50))
-        # self.set_mode_and_state(RobotControlMode.SERVO_CONTROL, 0)
-        # status = self.set_servo_cartesian_aa(
-        #             ROBOT_HOME_POSE_AA, wait=False, relative=False, mvacc=200, speed=50)
         assert status == 0, "Failed to set robot at home joint position"
+        
         self.set_mode_and_state(RobotControlMode.SERVO_CONTROL, 0)
-        self.set_gripper_position(self.gripper_start_state, wait=True)
-        time.sleep(0.1)
+
+        # Only move gripper if it's connected
+        # if self.gripper_start_state is not None:
+        #     self.set_gripper_position(self.gripper_start_state, wait=True)
 
 
 

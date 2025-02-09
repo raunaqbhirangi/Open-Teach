@@ -3,7 +3,7 @@ import hydra
 from abc import ABC
 
 from openteach.components.sensors.reskin import ReskinSensorPublisher
-from openteach.components.sensors.digit import DigitSensorPublisher
+# from openteach.components.sensors.digit import DigitSensorPublisher
 from .recorders.image import RGBImageRecorder, DepthImageRecorder, FishEyeImageRecorder
 from .recorders.robot_state import RobotInformationRecord
 from .recorders.sim_state import SimInformationRecord
