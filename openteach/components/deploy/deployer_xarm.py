@@ -1,7 +1,7 @@
 import hydra
 import numpy as np
 import pickle
-
+import ipdb
 from multiprocessing import Process
 
 from openteach.components import Component
@@ -84,6 +84,7 @@ class DeployServer(Component):
             return True
         except Exception as e:
             print(f"Error: {e}")
+            # ipdb.set_trace()
             print(f'robot: {robot} failed executing in perform_robot_action')
             return False
 
@@ -195,6 +196,7 @@ class DeployServer(Component):
                         # self._send_robot_state()
                         print('Applied robot action.')
                     else:
+                        # ipdbs.set_trace()
                         self.deployment_socket.send("Command failed!")
                     
                 self._continue_robot_action()

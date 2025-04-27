@@ -167,8 +167,10 @@ class ZMQCameraSubscriber(threading.Thread):
     def recv_depth_image(self):
         raw_data = self.socket.recv()
         striped_data = raw_data.lstrip(b"depth_image ")
+        
         data = pickle.loads(striped_data)
         depth_image = bl.unpack_array(data['depth_image'])
+        print(depth_image)
         return np.array(depth_image, dtype = np.int16), data['timestamp']
         
     def stop(self):

@@ -142,6 +142,10 @@ class DepthImageRecorder(Recorder):
                 self.timer.start_loop()
                 depth_data, timestamp = self.image_subscriber.recv_depth_image()
                 self.depth_frames.append(depth_data) 
+                # print(depth_data)
+                # min_val = np.min(depth_data)
+                # max_val = np.max(depth_data)
+                # print(f"Loaded depth frame #{len(self.depth_frames)-1}: min={min_val:.3f}, max={max_val:.3f}")
                 self.timestamps.append(timestamp)
 
                 self.num_image_frames += 1

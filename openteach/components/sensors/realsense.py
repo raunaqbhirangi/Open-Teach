@@ -8,7 +8,7 @@ from openteach.constants import *
 
 class RealsenseCamera(Component):
     def __init__(self, stream_configs, cam_serial_num, cam_id, cam_configs, stream_oculus = False,
-                 depth=False):
+                 depth=True):
         # Disabling scientific notations
         np.set_printoptions(suppress=True)
         self.cam_id = cam_id
@@ -17,6 +17,7 @@ class RealsenseCamera(Component):
         self._stream_configs = stream_configs
         self._stream_oculus = stream_oculus
         self._depth = depth
+        
 
         # Different publishers to avoid overload
         self.rgb_publisher = ZMQCameraPublisher(
@@ -100,6 +101,7 @@ class RealsenseCamera(Component):
 
             # Getting the images from the frames
             if self._depth:
+                
                 depth_image = np.asanyarray(depth_frame.get_data())
             else:
                 depth_image = np.zeros((self.cam_configs.height, self.cam_configs.width), dtype=np.uint16)
@@ -135,6 +137,7 @@ class RealsenseCamera(Component):
                     self.rgb_viz_publisher.send_image(rescale_image(color_image, 2)) # 640 * 360
 
                 # Publishing the depth images
+                print(depth_image)
                 self.depth_publisher.pub_depth_image(depth_image, timestamp)
                 self.depth_publisher.pub_intrinsics(self.intrinsics_matrix) # Publishing inrinsics along with the depth publisher
 

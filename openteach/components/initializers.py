@@ -3,7 +3,7 @@ import hydra
 from abc import ABC
 
 from openteach.components.sensors.reskin import ReskinSensorPublisher
-from openteach.components.sensors.digit import DigitSensorPublisher
+# from openteach.components.sensors.digit import DigitSensorPublisher
 from .recorders.image import RGBImageRecorder, DepthImageRecorder, FishEyeImageRecorder
 from .recorders.robot_state import RobotInformationRecord
 from .recorders.sim_state import SimInformationRecord
@@ -210,7 +210,7 @@ class Collector(ProcessInstantiator):
     Returns all the recorder processes. Start the list of processes 
     to run the record data.
     """
-    def __init__(self, configs, demo_num, depth=False):
+    def __init__(self, configs, demo_num, depth=True):
         super().__init__(configs)
         self.demo_num = demo_num
         self.depth = depth

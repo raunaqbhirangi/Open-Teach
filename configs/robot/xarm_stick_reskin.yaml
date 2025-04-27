@@ -1,13 +1,13 @@
 robot_name: xarm
 
-gripper_start_state: closed
+gripper_start_state: close
 
 # Detector used to teleoperate the robot
 detector:
   _target_: openteach.components.detector.oculus_stick.OculusVRStickDetector
   host: ${host_address}
   controller_state_pub_port: ${transformed_position_keypoint_port}
-  noise_angle_range_deg: [50,60]
+  noise_angle_range_deg: [40,50]
   
 # Operators used to retarget the keypoints
 operators:
