@@ -170,7 +170,7 @@ class ZMQCameraSubscriber(threading.Thread):
         
         data = pickle.loads(striped_data)
         depth_image = bl.unpack_array(data['depth_image'])
-        print(depth_image)
+        
         return np.array(depth_image, dtype = np.int16), data['timestamp']
         
     def stop(self):

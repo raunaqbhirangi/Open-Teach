@@ -220,32 +220,29 @@ class XArmOperator(Operator):
         
         # Relative transform
         if self.start_teleop:
+            relative_affine = get_relative_affine(self.init_affine,
+                              self.controller_state.right_affine)
+
+
+            # # # relative_affine = np.zeros((4, 4))
+            # # # relative_affine[:3, 3] = tmp_rel[:3, 3]
             # tmp_rel = get_relative_affine(self.init_affine,
             #                   self.controller_state.right_affine)
+            # R_full = tmp_rel[:3, :3]
 
+            # #    or directly extract yaw = rotation about Z:
+            # #    yaw = np.arctan2(R_full[1,0], R_full[0,0])
+            # r = R.from_matrix(R_full)
+            # roll, pitch, yaw = r.as_euler('xyz', degrees=False)
+            # # or: yaw = np.arctan2(R_full[1,0], R_full[0,0])
 
-            # relative_affine = np.zeros((4, 4))
+            # Rz_only = R.from_euler('z', yaw).as_matrix()
+            # # Rx_only = R.from_euler('x', roll, degrees=False).as_matrix()
+
+            # relative_affine = np.eye(4)
+            # # relative_affine[:3, :3] = Rx_only
+            # # relative_affine[:3, :3] = Rz_only
             # relative_affine[:3, 3] = tmp_rel[:3, 3]
-            tmp_rel = get_relative_affine(self.init_affine,
-                              self.controller_state.right_affine)
-            R_full = tmp_rel[:3, :3]
-
-            # 3) convert to Euler angles (roll, pitch, yaw) in XYZ order
-            #    or directly extract yaw = rotation about Z:
-            #    yaw = np.arctan2(R_full[1,0], R_full[0,0])
-            r = R.from_matrix(R_full)
-            roll, pitch, yaw = r.as_euler('xyz', degrees=False)
-            # or: yaw = np.arctan2(R_full[1,0], R_full[0,0])
-
-            # 4) rebuild a rotation that has zero roll & pitch, but keeps yaw
-            Rz_only = R.from_euler('z', yaw).as_matrix()
-            Rx_only = R.from_euler('x', roll, degrees=False).as_matrix()
-
-            # 5) pack into a homogeneous 4×4 (no translation)
-            relative_affine = np.eye(4)
-            # relative_affine[:3, :3] = Rx_only
-            relative_affine[:3, :3] = Rz_only
-            relative_affine[:3, 3] = tmp_rel[:3, 3]
         else:
             relative_affine = np.zeros((4,4))
             relative_affine[3, 3] = 1

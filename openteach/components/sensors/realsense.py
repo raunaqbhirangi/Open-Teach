@@ -17,8 +17,7 @@ class RealsenseCamera(Component):
         self._stream_configs = stream_configs
         self._stream_oculus = stream_oculus
         self._depth = depth
-        
-
+  
         # Different publishers to avoid overload
         self.rgb_publisher = ZMQCameraPublisher(
             host = stream_configs['host'],
@@ -98,10 +97,8 @@ class RealsenseCamera(Component):
             if self._depth:
                 depth_frame = aligned_frames.get_depth_frame()
             color_frame = aligned_frames.get_color_frame()
-
             # Getting the images from the frames
-            if self._depth:
-                
+            if self._depth:            
                 depth_image = np.asanyarray(depth_frame.get_data())
             else:
                 depth_image = np.zeros((self.cam_configs.height, self.cam_configs.width), dtype=np.uint16)

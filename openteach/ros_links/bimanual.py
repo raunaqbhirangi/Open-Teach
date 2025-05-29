@@ -68,11 +68,7 @@ class Robot(XArmAPI):
         for i in range(1):
             print(i)
             time.sleep(1)
-        # self.set_mode_and_state(RobotControlMode.CARTESIAN_CONTROL, 0)
-        # status = self.set_servo_angle(angle=ROBOT_HOME_JS, wait=True, is_radian=True, speed=math.radians(50))
-        # for i in range(2):
-        #     print(i)
-        #     time.sleep(1)
+
         self.set_mode_and_state(RobotControlMode.SERVO_CONTROL, 0)
 
         modified_robot_home_pose_AA = ROBOT_HOME_POSE_AA[:]
@@ -86,36 +82,22 @@ class Robot(XArmAPI):
         # modified_robot_home_pose_AA[0] += 55
         # modified_robot_home_pose_AA[1] -= 200
         # modified_robot_home_pose_AA[2] -= 28
-    
-        # For Random Initialization of Cup Insertion
-        # modified_robot_home_pose_AA[0] += random.uniform(-10, 10)
-        # modified_robot_home_pose_AA[1] += random.uniform(-10, 10)
-        
-        # # For Plug Insertion
+      
+        # For Reaching
         # modified_robot_home_pose_AA[0] += 134
-        # modified_robot_home_pose_AA[1] -= 105
-        # modified_robot_home_pose_AA[2] -= 165
+        # modified_robot_home_pose_AA[1] -= 25
+        # modified_robot_home_pose_AA[2] -= 55
+        
+        # For Plug Insertion
+        # modified_robot_home_pose_AA[0] += 119
+        # modified_robot_home_pose_AA[1] -= 75
+        # modified_robot_home_pose_AA[2] -= 155
         
         # # For USB Insertion
-        modified_robot_home_pose_AA[0] += 152
-        modified_robot_home_pose_AA[1] -= 131
-        modified_robot_home_pose_AA[2] -= 135
+        modified_robot_home_pose_AA[0] += 119
+        modified_robot_home_pose_AA[1] -= 75
+        modified_robot_home_pose_AA[2] -= 155
         
-        
-        # For Key Unlock
-        # modified_robot_home_pose_AA[0] += 122
-        # modified_robot_home_pose_AA[1] -= 131
-        # modified_robot_home_pose_AA[2] -= 25
-        
-        # For Card Swiping
-        # modified_robot_home_pose_AA[0] += 206
-        # modified_robot_home_pose_AA[1] -= 175
-        # modified_robot_home_pose_AA[2] -= 190
-        
-        # self.smooth_servo_move(modified_robot_home_pose_AA,
-        #                        step_size=1,
-        #                        loop_rate_hz=20.0,
-        #                        tol=1)
         
         def random_outside(inner_min, inner_max, outer_min, outer_max):
             # 50/50 pick which side
@@ -124,16 +106,21 @@ class Robot(XArmAPI):
             else:
                 return random.uniform(inner_max, outer_max)
             
-        x_offset = random_outside(-10, 10, -20, 20)
-        y_offset = random_outside(-10, 10, -20, 20)
+        x_offset = random_outside(0, 20, -10, 30)
+        y_offset = random_outside(-20, 20, -30, 30)
+        
+        self.smooth_servo_move(modified_robot_home_pose_AA,
+                               step_size=3,
+                               loop_rate_hz=20.0,
+                               tol=1)
 
-        modified_robot_home_pose_AA[0] += random.uniform(-30, 30)#x_offset#random.uniform(-30, 30)#x_offset  #random.uniform(20, 50) #random.uniform(-30, 30)
-        modified_robot_home_pose_AA[1] += random.uniform(-30, 30)#y_offset#random.uniform(-30, 30)#y_offset  #random.uniform(-30, 30) #random.uniform(-30, 30)
-        # modified_robot_home_pose_AA[2] += random.uniform(-30, -10)
+        # modified_robot_home_pose_AA[0] += random.uniform(-30, 30) #x_offset 
+        # modified_robot_home_pose_AA[1] += random.uniform(-30, 30) #y_offset
+        # # modified_robot_home_pose_AA[2] += random.uniform(-20, -10)
         
         print("Set State to:", modified_robot_home_pose_AA)
         self.smooth_servo_move(modified_robot_home_pose_AA,
-                               step_size=1,
+                               step_size=2,
                                loop_rate_hz=20.0,
                                tol=1)
         status = self.set_servo_cartesian_aa(
@@ -141,10 +128,7 @@ class Robot(XArmAPI):
         assert status == 0, "Failed to set robot at home joint position"
         self.set_mode_and_state(RobotControlMode.SERVO_CONTROL, 0)
         self.set_gripper_position(self.gripper_start_state, wait=True)
-        # for i in range(2):
-        #     print(i)
-        #     time.sleep(1)
-        
+
 
 class DexArmControl():
     def __init__(self, ip, gripper_start_state=800.0, record_type=None):

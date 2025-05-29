@@ -140,23 +140,14 @@ BIMANUAL_LEFT_HOME = [206, 0, 475, 3.142, 0, 0]
 # BIMANUAL_RIGHT_HOME = [261, -200, 450, 3.142, 0, 0]
 
 #### MODIFYED FOR Local Plug Insertion
-# BIMANUAL_RIGHT_HOME =  [340.0, -105.0, 310, 3.142, 0.0, 0.0]
-
-#### MODIFYED FOR Local USB Insertion
-BIMANUAL_RIGHT_HOME =  [330.0, -130.0, 320, 3.142, 0.0, 0.0]
-
-#### MODIFYED FOR Local Key Unlock
-# BIMANUAL_RIGHT_HOME =  [328.0, -130.0, 450, 3.142, 0.0, 0.0]
-
-#### MODIFYED FOR Local Card Swiping
-# BIMANUAL_RIGHT_HOME =  [410.0, -205.0, 255, 3.142, 0.0, 0.0]
-
-# BIMANUAL_RIGHT_HOME[0] += 0 #random.uniform(-30, 30)
-# BIMANUAL_RIGHT_HOME[1] += -25 #random.Zuniform(-30, 30)
-# # BIMANUAL_RIGHT_HOME[2] += random.uniform(10, 50) #random.uniform(-30, 30)
+# BIMANUAL_RIGHT_HOME =  [325.0, -75.0, 320, 3.142, 0.0, 0.0]
 
 #### Default
-# BIMANUAL_RIGHT_HOME = [206, 0, 475, 3.142, 0, 0]
+BIMANUAL_RIGHT_HOME = [206, 0, 475, 3.142, 0, 0]
+
+# BIMANUAL_RIGHT_HOME[0] += random.uniform(-30, 30)
+# BIMANUAL_RIGHT_HOME[1] += random.uniform(-30, 30)
+# BIMANUAL_RIGHT_HOME[2] += random.uniform(-10, 20) 
 
 ROBOT_HOME_POSE_AA = [206.0, -0.0, 475, 3.142, 0.0, 0.0]
 ROBOT_HOME_JS = [0.072358, -0.95536, -0.040176, 0.661511, -0.032836, 1.616466, 0.047656]

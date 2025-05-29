@@ -6,7 +6,7 @@ defaults:
   - override hydra/hydra_logging: disabled  
   - override hydra/job_logging: disabled 
 
-storage_path: /mnt/robotlab/zifan/crossmodal/0427_test
+storage_path: /mnt/robotlab/zifan/crossmodal/0529_test
 demo_num: 0
 sim_env: false
 use_sensor: true
