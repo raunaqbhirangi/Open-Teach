@@ -7,7 +7,7 @@ import cv2
 from pathlib import Path
 from scipy.spatial.transform import Rotation as R
 
-from utils import DATA_DIR
+DATA_DIR = '/mnt/zifan/data'
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--task-name", "-t", type=str, required=True)
